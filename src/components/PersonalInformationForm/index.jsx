@@ -126,7 +126,7 @@ export default function PersonalInformationForm() {
         state: cepData.uf,
       });
     }
-  };
+  }
 
   return (
     <>
