@@ -1,154 +1,89 @@
 
 import styled from 'styled-components';
-import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
 import CustomParseFormat from 'dayjs/plugin/customParseFormat';
-import { LocalizationProvider } from '@mui/x-date-pickers'
-import { FormWrapper } from '../PersonalInformationForm/FormWrapper';
 import { useState } from 'react';
-
+import { SubText } from '../SubText/SubText';
+import { Card } from '../Card/Card';
+import { Text } from '../Text/Text';
+import { BookingButton } from '../BookingButton/BookingButton';
 
 dayjs.extend(CustomParseFormat);
 
+const mockCard = [
+    { name: 'Presencial', price: 250 },
+    { name: 'Online', price: 100 },
+];
+
+const mockHospedagem = [
+    { name: 'Sem Hotel', price: 0 },
+    { name: 'Com Hotel', price: 350 },
+];
+
 export default function PaymentOptions() {
+    const [userTicket, setUserTicket] = useState({ ticketStatus: '', ticketValue: '', includesHotel: false, isRemote: false });
+    const [ticketModality, setTicketModality] = useState(null);
+    const [showHotel, setShowHotel] = useState(null);
 
-const [selected, setSelected] = useState(false)
+    const totalPrice = () => {
+        let price = mockCard.find((item) => item.name === ticketModality).price;
+        if (showHotel) {
+            price += mockHospedagem.find((item) => item.name === showHotel).price;
+        }
 
-function selectOption(){
-    if(selected === false){
-        setSelected(true)
-    } else{
-        setSelected(false)
-    }
-}
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
+    };
 
     return (
         <>
-            <StyledTypography variant="h4">Ingresso e Pagamento</StyledTypography>
-            <StyledSubText>Primeiro, escolha sua modalidade de ingresso</StyledSubText>
-            <LocalizationProvider>
-                <FormWrapper >
-                    <SelectOption onClick={selectOption}> 
-                            <h1>Presencial</h1>
-                            <h2>R$250</h2>
-                    </SelectOption> 
-                    <SelectOption onClick={selectOption}> 
-                            <h1>Online</h1>
-                            <h2>R$100</h2>
-                    </SelectOption> 
-                </FormWrapper>
-            </LocalizationProvider>
-            <StyledSubText>Ótimo! Agora escolha sua modalidade de hospedagem</StyledSubText>
-            <LocalizationProvider>
-                <FormWrapper >
-                    <SelectOption onClick={selectOption}> 
-                            <h1>Sem Hotel</h1>
-                            <h2>+R$0</h2>
-                    </SelectOption> 
-                    <SelectOption onClick={selectOption}> 
-                            <h1>Com Hotel</h1>
-                            <h2>+R$350</h2>
-                    </SelectOption> 
-                </FormWrapper>
-            </LocalizationProvider>
-            <StyledSubText>Fechado! O total ficou em <span>R$ 600</span>. Agora é só confirmar:</StyledSubText>
-            <ReserveButton>
-                <h1>RESERVAR INGRESSO</h1>
-            </ReserveButton>
+            <Text title="Ingresso e pagamento" />
+            <SubText title="Primeiro, escolha sua modalidade de ingresso" />
+
+            <StyledCard >
+                {mockCard.map((item, index) => (
+                    <Card
+                        key={index}
+                        name={item.name}
+                        price={`R$${item.price},00`}
+                        selectedName={ticketModality}
+                        setSelectedName={setTicketModality}
+                        setUserTicket={setUserTicket}
+                        userTicket={userTicket}
+                    />
+                ))}
+            </StyledCard>
+
+            {ticketModality === 'Presencial' && (
+                <>
+                    <SubText title="Ótimo! Agora escolha sua modalidade de hospedagem" />
+                    <StyledCard>
+                        {mockHospedagem.map((item, index) => (
+                            <Card
+                                key={index}
+                                name={item.name}
+                                price={`R$${item.price},00`}
+                                selectedName={showHotel}
+                                setSelectedName={setShowHotel}
+                                setUserTicket={setUserTicket}
+                            />
+                        ))}
+                    </StyledCard>
+                </>
+            )}
+
+            {(ticketModality === 'Online' || showHotel) && (
+                <>
+                    <SubText title={`Fechado! O total ficou em ${totalPrice()}. Agora é só confirmar`} />
+                    <BookingButton button="RESERVAR INGRESSO" />
+                
+                </>
+            )}
         </>
     );
 }
 
-const StyledTypography = styled(Typography)`
-    margin-bottom: 20px!important;
-`;
-
-const StyledSubText = styled.h2`
-    margin-top: 35px;
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 23px;
-    letter-spacing: 0em;
-    text-align: left;
-    color: #8E8E8E;
-    margin-bottom: 20px;
-    span{
-        font-weight: 600;
-    }
-`
-
-const SelectOption = styled.button`
-    background-color: ${(props) => (props.selected === true ? "#ffcb86" : "#FFFFFF")};
-    width: 145px;
-    height: 145px;
-    top: 323px;
-    left: 510px;
-    border-radius: 20px;
-    border: 1px;
-    border: 1px solid #CECECE;
-    margin-right: 20px;
-    cursor: pointer;
-    &:hover{
-        background-color: #eaeaea;
-        transition: 0.5s;
-        opacity: 0.7;
-    }
-    h1{
-        color: #454545; 
-        font-size: 16px;
-        font-weight: 400;
-        line-height: 19px;
-        letter-spacing: 0em;
-        text-align: center;
-    }
-    h2{
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 16px;
-        letter-spacing: 0em;
-        text-align: center;
-        color: #898989;
-    }
-`
-
-const ReserveButton = styled.button`
-    width: 162px;
-    height: 37px;
-    border-radius: 4px;
-    text-decoration: none;
-    box-shadow: 0px 0px 12px 3px #95949440, 0px 2px 6px 2px rgba(0, 0, 0, 0.2);
-    border:none!important;
-    background-color: #dedede!important;
-    cursor: pointer;
-    &:hover{
-        color: #000000;
-        transition: 0.5s;
-        opacity: 0.7;
-    }
-    h1{
-        color: #000000;
-        font-size: 13px;
-        font-weight: 400;
-        line-height: 16px;
-        letter-spacing: 0em;
-        text-align: center;
-    }
-`
-
-/* const FormWrapper = styled.form`
+const StyledCard = styled.div`
   display: flex;
-  width: 100%;
-  flex-wrap: wrap;
-  > div {
-    width: calc(50% - 20px);
-    margin: 0 10px 0 0;
-  }
-
-  @media (max-width: 600px) {
-    > div {
-      width: 100%;
-      padding-left: 0px !important;
-    }
-  }
-`; */
-
+  flex-direction: row;
+  gap: 15px;
+`;
