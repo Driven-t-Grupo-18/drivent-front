@@ -4,48 +4,59 @@ import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
 import CustomParseFormat from 'dayjs/plugin/customParseFormat';
 import { LocalizationProvider } from '@mui/x-date-pickers'
-import {FormWrapper} from '../../../components/PersonalInformationForm/FormWrapper'
-import { useState } from 'react';
-import SelectOption from '../../../components/OptionsBox';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import useToken from '../../../hooks/useToken';
+import HotelsBtn from '../../../components/HotelsBtn';
+import { hotelsArrayWithNoRep } from '../../../components/HotelsUtilitiesFunctions';
+import RoomsBtn from '../../../components/RoomsBtn';
 
 
 dayjs.extend(CustomParseFormat);
 
 export default function Hotel() {
+  const token = useToken()
+  const [hotels, setHotels] = useState([])
+  const [chosenHotel, setChosenHotel] = useState()
+  const [chosenRoom, setChosenRoom] = useState()
+  const [roomOptions, setRoomOptions] = useState([])
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_API_URL}/booking/all`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(ans => {
+        const resposta = ans.data
+        setHotels(resposta)
+      })
+      .catch(console.error)
+  }, [])
 
-const [selected, setSelected] = useState(false)
+  console.log(roomOptions)
 
-function selectOption(e){
-  e.preventDefault()
-    if(selected === false){
-        setSelected(true)
-    } else{
-        setSelected(false)
-    }
-}
-
-    return (
-        <>
-            <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-            <StyledSubText>Primeiro, escolha seu hotel</StyledSubText>
-            <LocalizationProvider>
-                <FormWrapper >
-                    <SelectOption onClick={selectOption} selected={selected} /> 
-
-                </FormWrapper>
-            </LocalizationProvider>
-            <StyledSubText >Ótima pedida! Agora escolha seu quarto:</StyledSubText>
-            <LocalizationProvider>
-                <FormWrapper >
-
-                </FormWrapper>
-            </LocalizationProvider>
-            <StyledSubText>Fechado! O total ficou em <span>R$ 600</span>. Agora é só confirmar:</StyledSubText>
-            <ReserveButton>
-                <h1>RESERVAR INGRESSO</h1>
-            </ReserveButton>
-        </>
-    );
+  return (
+    <>
+      <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
+      <StyledSubText>Primeiro, escolha seu hotel</StyledSubText>
+      <LocalizationProvider>
+        <FormHotel >
+          {hotels.map(x => {
+            return <HotelsBtn chosenHotel={chosenHotel} setChosenHotel={setChosenHotel} setRoomOptions={setRoomOptions} key={x.id} id={x.id} rooms={x.Rooms} image={x.image} name={x.name} typesOfRooms={'single, double e triple'} hotelAvailability={109} />
+          })
+          }
+        </FormHotel>
+      </LocalizationProvider>
+      <StyledSubText >Ótima pedida! Agora escolha seu quarto:</StyledSubText>
+      <LocalizationProvider>
+        <FormHotel >
+        {roomOptions.map(x => {
+        return <RoomsBtn key= {x.id} chosenRoom={chosenRoom} setChosenRoom={setChosenRoom} name={x.name} />
+        })}
+        </FormHotel>
+      </LocalizationProvider>
+      <StyledSubText>Fechado! O total ficou em <span>R$ 600</span>. Agora é só confirmar:</StyledSubText>
+      <ReserveButton>
+        <h1>RESERVAR INGRESSO</h1>
+      </ReserveButton>
+    </>
+  );
 }
 
 const StyledTypography = styled(Typography)`
@@ -89,3 +100,18 @@ const ReserveButton = styled.button`
         text-align: center;
     }
 `
+export const FormHotel = styled.form` // Criei pra ajustar responsividade
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  > div {
+    width: calc(50% - 20px);
+    margin: 0 10px 0 0;
+  }
+
+  @media (max-width: 600px) {
+    > div {
+      width: 100%;
+    }
+  }
+`;

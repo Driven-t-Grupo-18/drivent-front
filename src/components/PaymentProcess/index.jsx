@@ -51,6 +51,7 @@ export default function PaymentOptions() {
                         userTicket={userTicket}
                     />
                 ))}
+
             </StyledCard>
 
             {ticketModality === 'Presencial' && (
