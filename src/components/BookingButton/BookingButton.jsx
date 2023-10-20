@@ -1,11 +1,25 @@
+import axios from 'axios';
 import styled from 'styled-components';
+import useToken from '../../hooks/useToken';
+import { toast } from 'react-toastify';
 
 // eslint-disable-next-line react/prop-types
 export const BookingButton = ({ button, id }) => {
 
+  const token = useToken()
+
   function handleClick(e){
     e.preventDefault();
     console.log(id)
+    axios.post(`${import.meta.env.VITE_API_URL}/tickets`, { headers: { Authorization: `Bearer ${token}` } , body:{
+      ticketTypeId: id
+      }
+    }).then(() => {
+      toast('Ticket reservado com sucesso!');
+    }).catch(err => {
+      console.error(err);
+      toast('Erro ao reservar Ticket');
+    })
   }
 
     return (
@@ -25,7 +39,7 @@ const StyledButton = styled.button`
   font-size: 14px;
   background-color: #e0e0e0;
   box-shadow: 0px 2px 10px 0px #00000040;
-  :hover {
+  &:hover {
     cursor: pointer;
   }
 `;

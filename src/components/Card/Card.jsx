@@ -39,6 +39,12 @@ const StyledContainer = styled.div`
   justify-content: center;
   gap: 5px;
   background-color: ${(props) => (props.selected ? '#FFEED2' : '#FFFFFF')};
+  &:hover{
+        background-color: ${(props) => (props.selected === true ? "#ffeed29d" : "#eaeaea")};
+        transition: 0.5s;
+        opacity: 0.7;
+        cursor: pointer;
+  }
 `;
 
 const StyledName = styled.p`
