@@ -67,6 +67,7 @@ export default function PaymentOptions() {
         return ticket.id;
     }
 
+    
 
     return (
         <>
@@ -97,7 +98,7 @@ export default function PaymentOptions() {
                                 key={index}
                                 name={item.name}
                                 includesHotel={item.includesHotel}
-                                price={`R$${item.price},00`}
+                                price={`+R$${item.price}`}
                                 selectedName={showHotel}
                                 setSelectedName={setShowHotel}
                                 setUserTicket={setUserTicket}
