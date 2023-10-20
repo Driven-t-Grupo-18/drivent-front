@@ -56,6 +56,7 @@ export default function App() {
   );
 }
 
+// eslint-disable-next-line react/prop-types
 function ProtectedRouteGuard({ children }) {
   const token = useToken();
 

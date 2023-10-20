@@ -7,6 +7,7 @@ const TicketOptions = [
   { name: 'Sem Hotel', isRemote: false, includesHotel: false },
 ];
 
+// eslint-disable-next-line react/prop-types
 export const Card = ({ name, price, selectedName, setSelectedName, setUserTicket }) => {
   const option = TicketOptions.find((option) => option.name === name);
 

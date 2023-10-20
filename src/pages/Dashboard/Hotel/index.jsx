@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import useToken from '../../../hooks/useToken';
 import HotelsBtn from '../../../components/HotelsBtn';
-import { hotelsArrayWithNoRep } from '../../../components/HotelsUtilitiesFunctions';
 import RoomsBtn from '../../../components/RoomsBtn';
 
 
@@ -27,7 +26,7 @@ export default function Hotel() {
         setHotels(resposta)
       })
       .catch(console.error)
-  }, [])
+  }, [token])
 
 
   console.log(chosenRoom)
