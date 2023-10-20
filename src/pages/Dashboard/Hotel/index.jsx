@@ -29,8 +29,8 @@ export default function Hotel() {
       .catch(console.error)
   }, [])
 
-  console.log(roomOptions)
 
+  console.log(chosenRoom)
   return (
     <>
       <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
@@ -38,23 +38,26 @@ export default function Hotel() {
       <LocalizationProvider>
         <FormHotel >
           {hotels.map(x => {
-            return <HotelsBtn chosenHotel={chosenHotel} setChosenHotel={setChosenHotel} setRoomOptions={setRoomOptions} key={x.id} id={x.id} rooms={x.Rooms} image={x.image} name={x.name} typesOfRooms={'single, double e triple'} hotelAvailability={109} />
+            return <HotelsBtn setChosenRoom={setChosenRoom} chosenHotel={chosenHotel} setChosenHotel={setChosenHotel} setRoomOptions={setRoomOptions} key={x.id} id={x.id} rooms={x.Rooms} image={x.image} name={x.name} typesOfRooms={'single, double e triple'} hotelAvailability={109} />
           })
           }
         </FormHotel>
       </LocalizationProvider>
-      <StyledSubText >Ótima pedida! Agora escolha seu quarto:</StyledSubText>
+      {chosenHotel ? <StyledSubText>Ótima pedida! Agora escolha seu quarto:</StyledSubText> : ''}
       <LocalizationProvider>
         <FormHotel >
         {roomOptions.map(x => {
-        return <RoomsBtn key= {x.id} chosenRoom={chosenRoom} setChosenRoom={setChosenRoom} name={x.name} />
+
+        return <RoomsBtn key= {x.id} id={x.id} capacity={x.capacity} booked={x.Booking.length || 0} chosenRoom={chosenRoom} setChosenRoom={setChosenRoom} name={x.name} />
         })}
         </FormHotel>
       </LocalizationProvider>
-      <StyledSubText>Fechado! O total ficou em <span>R$ 600</span>. Agora é só confirmar:</StyledSubText>
+      {chosenHotel && chosenRoom ? 
       <ReserveButton>
         <h1>RESERVAR INGRESSO</h1>
       </ReserveButton>
+      :""
+      }
     </>
   );
 }
@@ -85,6 +88,7 @@ const ReserveButton = styled.button`
     box-shadow: 0px 0px 12px 3px #95949440, 0px 2px 6px 2px rgba(0, 0, 0, 0.2);
     border:none!important;
     background-color: #dedede!important;
+    margin-top: 46px; 
     cursor: pointer;
     &:hover{
         color: #000000;
