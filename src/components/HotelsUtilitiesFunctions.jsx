@@ -66,10 +66,35 @@ export function HotelAvailability(rooms){
     let balance = 0;
     rooms.map(x => {
         balance += x.capacity - (x.Booking.length)
-
     })
 
     return balance
+}
+export function typeOfRoom(capacity){
+    let type;
+    switch (capacity) {
+        case 1:
+            type='Single';
+            break;
+        case 2:
+            type='Double';
+            break;
+        case 3:
+            type='Triple';
+            break;
+    }
+    return type
+}
+export function RoomVacancy(hotels, chosenRoom){
+    const hotel = hotels?.find(objeto => {
+        return objeto?.id === chosenRoom?.hotelId 
+    })
+    const room = hotel?.Rooms.find(objeto => {
+        return objeto?.id === chosenRoom?.id
+    })
+
+
+    return room?.Booking.length
 }
 
 
