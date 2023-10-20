@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import usePayment from "../../hooks/api/usePayment";
 import { useForm } from "../../hooks/useForm";
 import FormValidations from "./FormValidations";
+import MuiButton from "@mui/material/Button";
+import Input from "./Input"
 
 export default function PaymentForm({ticket}) {
     const [paymentStatus, setPaymentStatus] = useState('pending');
@@ -91,7 +93,17 @@ export default function PaymentForm({ticket}) {
                                     value = {data.number}
                                     mask = "9999 9999 9999 9999"
                                     onChange={handleChange('number')}
-                                />
+                                />                                
+                            </InputContainer>
+
+                            <InputContainer>
+                              <Input 
+                                label="Name"
+                                name="name"
+                                size="small"
+                                value={data.name}
+                                onChange={handleChange('name')}
+                              />
                             </InputContainer>
 
                             <InputContainer>
@@ -115,6 +127,7 @@ export default function PaymentForm({ticket}) {
                                     />
                                 </div>                            
                             </InputContainer>
+                            
 
                             <SubmitContainer>
                                 <Button type="submit">
@@ -133,9 +146,7 @@ export default function PaymentForm({ticket}) {
                     </FinishedPayment>
                 }
 
-            </Payment>
-
-
+            </Payment>  
         </>
     );
 }
@@ -145,8 +156,9 @@ const Payment = styled.div`
   width: 100%;
 
   img {
-    width: 325px;
+    width: 300px;
     height: 200px;
+    margin-left: -15px;
   }
 
   @media (max-width: 750px) {
@@ -156,7 +168,7 @@ const Payment = styled.div`
 `;
 
 const CardForm = styled.form`
-    margin: 10px 20px;
+    margin: 20px 10px;
     display: flex;
     flex-direction: column;
 `;
@@ -165,13 +177,14 @@ const InputContainer = styled.div`
 > div {
   width: 100%;
   display: flex;
-  gap: 25px;
+  gap:15px;
   min-width: 225px;
 }
 `;
 
 const SubmitContainer = styled.div`
   margin-top: 20px!important;
+  margin-left: -290px;
   width: 100%!important;
 
   @media (max-width: 750px) {
@@ -179,6 +192,15 @@ const SubmitContainer = styled.div`
     justify-content: center;
   }
 `;
+
+const Button = styled(MuiButton)`
+  margin-top: 40px !important;
+  background-color: #E0E0E0 !important;
+  color: #000 !important;
+  box-shadow: rgba(149, 157, 165, 0.3) 0px 8px 24px !important;
+
+  height: 40px;
+`
 
 const FinishedPayment = styled.div`
     margin-top: 20px;
