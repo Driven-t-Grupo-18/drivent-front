@@ -1,17 +1,19 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { HotelAvailability, TypesOfRooms } from './HotelsUtilitiesFunctions';
 
 
 export default function HotelsBtn(props) {
-    const {id, rooms, name, image, chosenHotel, setChosenHotel, setRoomOptions} = props
+    const {id, rooms, name, image, setChosenRoom, chosenHotel, setChosenHotel, setRoomOptions} = props
     const [selected, setSelected] = useState(false)
     function selectOption(e) {
         e.preventDefault();
+        setChosenRoom()
+
         if (selected) {
             setChosenHotel()
             setRoomOptions([])
+            
 
         } else {
             setChosenHotel(id)
@@ -51,7 +53,6 @@ const OptionBox = styled.div`
     left: 510px;
     border-radius: 10px;
     border: 1px;
-    border: 1px solid #CECECE;
     padding-left: 14px;
     margin-right: 19px!important;
     cursor: pointer;
