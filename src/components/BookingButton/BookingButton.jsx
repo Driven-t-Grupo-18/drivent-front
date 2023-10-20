@@ -1,9 +1,16 @@
 import styled from 'styled-components';
 
-export const BookingButton = ({ button }) => {
+// eslint-disable-next-line react/prop-types
+export const BookingButton = ({ button, id }) => {
+
+  function handleClick(e){
+    e.preventDefault();
+    console.log(id)
+  }
+
     return (
         <>
-            <StyledButton>{button}</StyledButton>
+            <StyledButton  onClick={handleClick}>{button}</StyledButton>
         </>
     );
 };
