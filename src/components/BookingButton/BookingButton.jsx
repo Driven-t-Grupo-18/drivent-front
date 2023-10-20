@@ -8,18 +8,24 @@ export const BookingButton = ({ button, id }) => {
 
   const token = useToken()
 
-  function handleClick(e){
+  function handleClick(e) {
     e.preventDefault();
-    console.log(id)
-    axios.post(`${import.meta.env.VITE_API_URL}/tickets`, { headers: { Authorization: `Bearer ${token}` } , body:{
-      ticketTypeId: id
-      }
-    }).then(() => {
-      toast('Ticket reservado com sucesso!');
-    }).catch(err => {
-      console.error(err);
-      toast('Erro ao reservar Ticket');
-    })
+    console.log(id);
+    axios
+      .post(`${import.meta.env.VITE_API_URL}/tickets`, {
+        ticketTypeId: id
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(() => {
+        toast('Ticket reservado com sucesso!');
+      })
+      .catch(err => {
+        console.error(err);
+        toast('Erro ao reservar Ticket');
+      });
   }
 
     return (
