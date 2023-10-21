@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Card } from "../Card/Card";
 import { SubText } from "../SubText/SubText";
 import { Text } from "../Text/Text";
 import CreditCard from "../../assets/images/creditCard.png";
@@ -9,12 +8,35 @@ import usePayment from "../../hooks/api/usePayment";
 import { useForm } from "../../hooks/useForm";
 import FormValidations from "./FormValidations";
 import MuiButton from "@mui/material/Button";
-import Input from "./Input"
+import Input from "./Input";
+import { Card } from "./Card";
+import { useCreateTicket } from "../../hooks/api/useTicket";
+import { toast } from 'react-toastify';
 
 export default function PaymentForm({ticket}) {
-    const [paymentStatus, setPaymentStatus] = useState('pending');
-    const { payment } = usePayment();
 
+    useEffect( () => {
+      if (!ticket) return;
+    }, []);
+
+    function ticketType() {
+  
+      let type = '';
+      if (ticket.isRemote) {
+        type += 'Online';
+        return type;
+      }
+  
+      if (!ticket.includesHotel) type += 'Presencial';
+      else type += 'Presencial + Hotel';
+      return type;
+    }
+  
+    const type = ticketType();
+
+    const [paymentStatus, setPaymentStatus] = useState('pending');
+    const { paymentProcess } = usePayment();
+    const { createTicket } = useCreateTicket();
     const { 
         handleSubmit,
         handleChange,
@@ -39,9 +61,18 @@ export default function PaymentForm({ticket}) {
             return;
           }
     
-          //ticketID
+          let newTicket = null;
+
+          try {
+            newTicket = {id: 3}; //await createTicket({"ticketTypeId": ticket.id});
+          } catch (err) {
+            console.log(err);            
+            toast('Não foi possível realizar o pagamento!');
+            return;
+          }
 
           const newData = {
+            ticketId: newTicket.id,
             cardData: {
               issuer,
               number: data.number,
@@ -52,11 +83,11 @@ export default function PaymentForm({ticket}) {
           };
     
           try {
-            await payment(newData);
+            await paymentProcess(newData);
             setPaymentStatus('succeed');
             toast('Pagamento efetuado com sucesso!');
           } catch (err) {
-            console.log(err.response.data.message)
+            console.log(err)
             toast('Não foi possível realizar o pagamento!');
           }
         },
@@ -68,17 +99,13 @@ export default function PaymentForm({ticket}) {
           cvv: '',
         },
       });
-
-      useEffect( () => {
-        if (!ticket) return;
-      }, []);
    
 
     return(
         <>
             <Text title="Ingresso e Pagamento" />
             <SubText title="Ingresso escolhido" />
-            <Card />
+            <Card name={type} price={ticket.price}/>
             <SubText title="Pagamento" />
             <Payment>
                 {paymentStatus === 'pending' &&
@@ -93,7 +120,9 @@ export default function PaymentForm({ticket}) {
                                     value = {data.number}
                                     mask = "9999 9999 9999 9999"
                                     onChange={handleChange('number')}
-                                />                                
+                                />
+                                {errors.number && <Error>{errors.number}</Error>}
+                                <h5>E.g.: 49..., 51..., 55..., 22...</h5>                                
                             </InputContainer>
 
                             <InputContainer>
@@ -104,6 +133,7 @@ export default function PaymentForm({ticket}) {
                                 value={data.name}
                                 onChange={handleChange('name')}
                               />
+                              {errors.name && <Error>{errors.name}</Error>}
                             </InputContainer>
 
                             <InputContainer>
@@ -125,7 +155,9 @@ export default function PaymentForm({ticket}) {
                                         value={data.cvv}
                                         onChange={handleChange('cvv')}
                                     />
-                                </div>                            
+                                </div>
+                                {errors.expirationDate && <Error>{errors.expirationDate}</Error>}                            
+                                {errors.cvv && <Error>{errors.cvv}</Error>}
                             </InputContainer>
                             
 
@@ -141,7 +173,8 @@ export default function PaymentForm({ticket}) {
                     <FinishedPayment>
                         <img src={CheckIcon} />
                         <div>
-                            
+                            <h2>Pagamento confirmado!</h2>
+                            <h3>Prossiga para escolha de hospedagem e atividades</h3>
                         </div>
                     </FinishedPayment>
                 }
@@ -180,7 +213,19 @@ const InputContainer = styled.div`
   gap:15px;
   min-width: 225px;
 }
+
+h5 {
+  font-size: 13px;
+  margin: 5px 0px 0px 3px;
+  color: #8E8E8E;
+}
 `;
+
+const Error = styled.p`
+  font: Roboto;
+  color: red;
+  margin: 5px;
+`
 
 const SubmitContainer = styled.div`
   margin-top: 20px!important;
@@ -209,10 +254,25 @@ const FinishedPayment = styled.div`
     > div {
     display: flex;
     flex-direction: column;
+
+    h2 {
+      font-size: 16px;
+      weight: 700;
+      color: #454545;
+    }
+
+    h3 {
+      font-size: 16px;
+      weight: 400;
+      color: #454545;
+    }
+
     }
 
     img {
     width: 60px;
     height: 60px;
     }
+
+    
 `;
