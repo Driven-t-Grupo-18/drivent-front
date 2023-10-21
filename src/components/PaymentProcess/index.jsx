@@ -37,7 +37,7 @@ export default function PaymentOptions(props) {
 
     const totalPrice = () => {
         let price = mockCard.find((item) => item.name === ticketModality).price;
-        if (showHotel) {
+        if (ticketModality === 'Presencial') {
             price += mockHospedagem.find((item) => item.name === showHotel).price;
         }
 
@@ -100,6 +100,7 @@ export default function PaymentOptions(props) {
                                         selectedName={showHotel}
                                         setSelectedName={setShowHotel}
                                         setUserTicket={setUserTicket}
+                                        
                                     />
                                 ))}
                             </StyledCard>

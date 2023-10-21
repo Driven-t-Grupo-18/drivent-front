@@ -29,7 +29,7 @@ export default function HotelsBtn(props) {
         }
     })
     return (
-        <OptionBox onClick={reserved ? () =>{} : selectOption} reserved={reserved} selected={selected}>
+        <OptionBox onClick={reserved ? () =>{} : selectOption} $reserved={reserved.toString()} selected={selected}>
             <img src={image} />
             <h1>{name}</h1>
             <h2>{!reserved ? 'Tipos de acomodação': 'Quarto reservado' }</h2>
@@ -55,9 +55,9 @@ const OptionBox = styled.div`
     cursor: pointer;
     font-family: 'Roboto', sans-serif !important;
     &:hover{
-        background-color: ${(props) => props.reserved ? "#ffeed2" : (props.selected === true ? "#ffeed29d" : "#eaeaea")};
+        background-color: ${(props) => props.reserved === 'true' ? "#ffeed2" : (props.selected === true ? "#ffeed29d" : "#eaeaea")};
         transition: 0.5s;
-        opacity: ${(props) => {props.reserved ? '' : '0.7'}};
+        opacity: ${(props) => {props.reserved === 'true' ? '' : '0.7'}};
     }
     h1{
         color: #343434; 
