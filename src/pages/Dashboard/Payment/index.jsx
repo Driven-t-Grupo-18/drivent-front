@@ -9,16 +9,14 @@ export default function Payment() {
   const token = useToken()
   const [status, setStatus] = useState("pending");
   const [ticket, setTicket] = useState(undefined);
-  const { getTicket } = useGetTicket();
-console.log(ticket)
   useEffect( () => {
     axios.get(`${import.meta.env.VITE_API_URL}/tickets`, {headers: {Authorization: `Bearer ${token}`}})
     .then( res => {
-        console.log(res.data)
         setTicket(res.data.TicketType)
         setStatus('payment')
     })
     .catch(err => {
+      if (err.response.status === 404) return setStatus('pending')
       console.error(err)
       setStatus('pending')
     })
@@ -28,7 +26,8 @@ console.log(ticket)
   return (
     <>
       {status === "pending" && <PaymentOptions setStatus={setStatus} setTicket={setTicket} /> }
-      {status === "payment" && <PaymentForm ticket={ticket} /> }           
+
+      {status === "payment" && <PaymentForm ticket={ticket} /> }      
     </>   
   );
 }

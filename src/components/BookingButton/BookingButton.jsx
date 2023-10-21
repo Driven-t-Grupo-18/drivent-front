@@ -10,7 +10,6 @@ export const BookingButton = ({ button, id, setCallPayment, setStatus, ticketReg
 
   function handleClick(e) {
     e.preventDefault();
-    console.log(id);
     axios
       .post(`${import.meta.env.VITE_API_URL}/tickets`, {
         ticketTypeId: id

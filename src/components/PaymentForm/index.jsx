@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { SubText } from "../SubText/SubText";
 import { Text } from "../Text/Text";
-import CreditCard from "../../assets/images/creditCard.png";
+import CreditCard from "../../components/PaymentForm/CreditCard";
 import CheckIcon from "../../assets/images/check.svg";
 import { useEffect, useState } from "react";
 import usePayment from "../../hooks/api/usePayment";
@@ -106,7 +106,7 @@ export default function PaymentForm({ticket}) {
             <Card disabled={true} reserved={'reservado'} name={ticket.name} price={ticket.price}/>
             <SubText title="Pagamento" />
             <Payment>
-                {paymentStatus === 'pending' &&
+                {/*paymentStatus === 'pending' &&
                     <>
                         <img src={CreditCard} alt="creditCard"/>
                         <CardForm onSubmit={handleSubmit}>
@@ -166,7 +166,8 @@ export default function PaymentForm({ticket}) {
                             </SubmitContainer>                            
                         </CardForm>
                     </>
-                }
+    */}
+    <CreditCard/>
                 {paymentStatus === 'succeed' &&
                     <FinishedPayment>
                         <img src={CheckIcon} />
@@ -226,13 +227,14 @@ const Error = styled.p`
 `
 
 const SubmitContainer = styled.div`
-  margin-top: 20px!important;
+  margin-top: 70px;
   margin-left: -290px;
   width: 100%!important;
 
   @media (max-width: 750px) {
     display: flex;
     justify-content: center;
+    margin-left: 0px;
   }
 `;
 
@@ -241,8 +243,8 @@ const Button = styled(MuiButton)`
   background-color: #E0E0E0 !important;
   color: #000 !important;
   box-shadow: rgba(149, 157, 165, 0.3) 0px 8px 24px !important;
-
   height: 40px;
+  
 `
 
 const FinishedPayment = styled.div`
