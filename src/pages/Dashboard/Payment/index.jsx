@@ -26,6 +26,7 @@ export default function Payment() {
   return (
     <>
       {status === "pending" && <PaymentOptions setStatus={setStatus} setTicket={setTicket} /> }
+
       {status === "payment" && <PaymentForm ticket={ticket} /> }      
     </>   
   );
