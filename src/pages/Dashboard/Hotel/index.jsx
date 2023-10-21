@@ -9,6 +9,8 @@ import axios from 'axios';
 import useToken from '../../../hooks/useToken';
 import HotelsBtn from '../../../components/HotelsBtn';
 import RoomsBtn from '../../../components/RoomsBtn';
+import { RoomVacancy, typeOfRoom } from '../../../components/HotelsUtilitiesFunctions';
+import { toast } from 'react-toastify';
 
 
 dayjs.extend(CustomParseFormat);
@@ -19,19 +21,52 @@ export default function Hotel() {
   const [chosenHotel, setChosenHotel] = useState()
   const [chosenRoom, setChosenRoom] = useState()
   const [roomOptions, setRoomOptions] = useState([])
+  const [reserved, setReserved] = useState(false)
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/booking/all`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${import.meta.env.VITE_API_URL}/booking`, { headers: { Authorization: `Bearer ${token}` } })
+    .then( ans => {
+      setChosenRoom(ans.data.Room)
+
+      axios.get(`${import.meta.env.VITE_API_URL}/hotels/${ans.data.Room.id}`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(ans => {
+          setReserved(true)
+          setChosenHotel(ans.data)
+        }) 
+        .catch(console.err)
+     
+    })
+    .catch( err => {
+      if (err.response.status === 404){
+        setReserved(false)
+      }
+    })
+    .finally(() => {
+      axios.get(`${import.meta.env.VITE_API_URL}/booking/all`, { headers: { Authorization: `Bearer ${token}` } })
       .then(ans => {
         const resposta = ans.data
         setHotels(resposta)
       })
-      .catch(console.error)
+      .catch(err => console.error(err))
+    })
   }, [token])
 
+  function handleReservation(){
+    axios.post(`${import.meta.env.VITE_API_URL}/booking`, {roomId: chosenRoom.id}, {headers: {Authorization: `Bearer ${token}`}})
+    .then(ans => {
+      setReserved(true)
+    })
+    .catch(err => {
+      console.error(err)
+      if (err.response.status === 500) return toast("Você já tem um quarto reservado!")
+  
+    })
+  }
+  const booked = RoomVacancy(hotels, chosenRoom)
 
-  console.log(chosenRoom)
   return (
     <>
+      {!reserved ?
+      <>
       <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
       <StyledSubText>Primeiro, escolha seu hotel</StyledSubText>
       <LocalizationProvider>
@@ -52,11 +87,24 @@ export default function Hotel() {
         </FormHotel>
       </LocalizationProvider>
       {chosenHotel && chosenRoom ? 
-      <ReserveButton>
+      <ReserveButton onClick={handleReservation} >
         <h1>RESERVAR INGRESSO</h1>
       </ReserveButton>
       :""
       }
+      </>
+      :
+      (<>
+      <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
+      <StyledSubText>Você já escolheu seu quarto:</StyledSubText>
+      <LocalizationProvider>
+        <FormHotel >
+        
+        <HotelsBtn reserved={reserved} setChosenRoom={setChosenRoom} chosenHotel={chosenHotel} setChosenHotel={setChosenHotel} chosenRoom={chosenRoom} setRoomOptions={setRoomOptions} id={chosenHotel.id} image={chosenHotel.image} name={chosenHotel.name} booked={booked} typeOfRoom={typeOfRoom(chosenRoom.capacity)}/>
+
+        </FormHotel>
+      </LocalizationProvider>
+      </>)}
     </>
   );
 }
