@@ -2,28 +2,28 @@ const validations = {
     number: {
       custom: {
         isValid: (value) => parseInt(value?.length, 10) === 19,
-        message: 'Digite um número de cartão válido',
+        message: 'Número de cartão inválido',
       },
     },
   
     name: {
       custom: {
         isValid: (value) => isValidString(value),
-        message: 'Digite um nome válido',
+        message: 'Nome inválido',
       },
     },
   
     expirationDate: {
       custom: {
         isValid: (value) => isValidExpirationDate(value),
-        message: 'Digite uma data de expiração válida - EX: (11/23 - MÊS/ANO)',
+        message: 'Data de expiração inválida ',
       },
     },
   
     cvv: {
       custom: {
         isValid: (value) => parseInt(value?.length, 10) === 3,
-        message: 'Digite um cvv válido',
+        message: 'CVV inválido',
       },
     },
   
