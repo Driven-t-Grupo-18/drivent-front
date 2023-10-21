@@ -12,7 +12,7 @@ import Payment from '../../pages/Dashboard/Payment';
 
 dayjs.extend(CustomParseFormat);
 
-export default function PaymentOptions() {
+export default function PaymentOptions({setStatus, setTicket}) {
     const token = useToken()
     const [userTicket, setUserTicket] = useState({ ticketStatus: '', ticketValue: '', includesHotel: false, isRemote: false });
     const [ticketModality, setTicketModality] = useState(null);
@@ -64,11 +64,10 @@ export default function PaymentOptions() {
         const ticket = ticketsTypes.find((ticket) => ticket.includesHotel === userTicket.includesHotel && ticket.isRemote === userTicket.isRemote)
         return ticket.id;
     }
-
-    const handlePaymentClick = () => {
-        setCallPayment(true);
-    };
-
+    
+    function ticketRegister(){
+        setTicket({price: totalPrice(), name: ticketModality === 'Online' ?  'Online' :`${ticketModality} + ${showHotel}`, userTicket})
+    }
     return (
         <>
             {callPayment ? (
@@ -115,7 +114,7 @@ export default function PaymentOptions() {
                     {(ticketModality === 'Online' || showHotel) && (
                         <>
                             <SubText title={`Fechado! O total ficou em ${totalPrice()}. Agora é só confirmar`} />
-                            <BookingButton id={defineTicketTypes()} button="RESERVAR INGRESSO" onClick={handlePaymentClick} />
+                            <BookingButton id={defineTicketTypes()} button="RESERVAR INGRESSO" ticketRegister={ticketRegister} setCallPayment={setCallPayment} setStatus={setStatus} />
                         </>
                     )}
                 </>

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import usePayment from "../../hooks/api/usePayment";
 import { useForm } from "../../hooks/useForm";
 import FormValidations from "./FormValidations";
+import { Button, Input } from "@mui/material";
 
 export default function PaymentForm({ticket}) {
     const [paymentStatus, setPaymentStatus] = useState('pending');
@@ -71,12 +72,11 @@ export default function PaymentForm({ticket}) {
         if (!ticket) return;
       }, []);
    
-
     return(
         <>
             <Text title="Ingresso e Pagamento" />
             <SubText title="Ingresso escolhido" />
-            <Card />
+            <Card disabled={true} reserved={'reservado'} name={ticket.name} price={ticket.price}/>
             <SubText title="Pagamento" />
             <Payment>
                 {paymentStatus === 'pending' &&

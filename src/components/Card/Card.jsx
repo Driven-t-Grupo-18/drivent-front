@@ -8,7 +8,7 @@ const TicketOptions = [
 ];
 
 // eslint-disable-next-line react/prop-types
-export const Card = ({ name, price, selectedName, setSelectedName, setUserTicket }) => {
+export const Card = ({ disabled, name, price, selectedName, setSelectedName, setUserTicket, reserved}) => {
   const option = TicketOptions.find((option) => option.name === name);
 
   const handleClick = () => {
@@ -21,7 +21,7 @@ export const Card = ({ name, price, selectedName, setSelectedName, setUserTicket
   };
 
   return (
-    <StyledContainer onClick={handleClick} selected={selectedName === name}>
+    <StyledContainer reserved={reserved} onClick={disabled ? ()=>{} : handleClick} selected={selectedName === name}>
       <StyledName>{name}</StyledName>
       <StyledPrice>{price}</StyledPrice>
     </StyledContainer>
@@ -29,7 +29,7 @@ export const Card = ({ name, price, selectedName, setSelectedName, setUserTicket
 };
 
 const StyledContainer = styled.div`
-  width: 145px;
+  width: ${props => props.reserved === 'reservado' ? '290px' : '145px'};
   height: 145px;
   border-radius: 20px;
   border: solid 1px #cecece;
