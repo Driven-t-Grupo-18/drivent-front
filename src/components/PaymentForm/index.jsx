@@ -7,14 +7,13 @@ import { useEffect, useState } from "react";
 import usePayment from "../../hooks/api/usePayment";
 import { useForm } from "../../hooks/useForm";
 import FormValidations from "./FormValidations";
+import { Input } from "@mui/material";
 import MuiButton from "@mui/material/Button";
-import Input from "./Input";
 import { Card } from "./Card";
 import { useCreateTicket } from "../../hooks/api/useTicket";
 import { toast } from 'react-toastify';
 
 export default function PaymentForm({ticket}) {
-
     useEffect( () => {
       if (!ticket) return;
     }, []);
@@ -100,12 +99,11 @@ export default function PaymentForm({ticket}) {
         },
       });
    
-
     return(
         <>
             <Text title="Ingresso e Pagamento" />
             <SubText title="Ingresso escolhido" />
-            <Card name={type} price={ticket.price}/>
+            <Card disabled={true} reserved={'reservado'} name={ticket.name} price={ticket.price}/>
             <SubText title="Pagamento" />
             <Payment>
                 {paymentStatus === 'pending' &&
@@ -257,13 +255,13 @@ const FinishedPayment = styled.div`
 
     h2 {
       font-size: 16px;
-      weight: 700;
+      font-weight: 700;
       color: #454545;
     }
 
     h3 {
       font-size: 16px;
-      weight: 400;
+      font-weight: 400;
       color: #454545;
     }
 

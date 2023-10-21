@@ -4,7 +4,7 @@ import useToken from '../../hooks/useToken';
 import { toast } from 'react-toastify';
 
 // eslint-disable-next-line react/prop-types
-export const BookingButton = ({ button, id }) => {
+export const BookingButton = ({ button, id, setCallPayment, setStatus, ticketRegister, setTicket }) => {
 
   const token = useToken()
 
@@ -19,8 +19,12 @@ export const BookingButton = ({ button, id }) => {
           Authorization: `Bearer ${token}`
         }
       })
-      .then(() => {
+      .then((res) => {
         toast('Ticket reservado com sucesso!');
+        setTicket(res.data.TicketType)
+        setCallPayment(true)
+        setStatus('payment')
+
       })
       .catch(err => {
         console.error(err);

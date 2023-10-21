@@ -12,7 +12,8 @@ import Payment from '../../pages/Dashboard/Payment';
 
 dayjs.extend(CustomParseFormat);
 
-export default function PaymentOptions() {
+export default function PaymentOptions(props) {
+    const {setTicket, setStatus} = props
     const token = useToken()
     const [userTicket, setUserTicket] = useState({ ticketStatus: '', ticketValue: '', includesHotel: false, isRemote: false });
     const [ticketModality, setTicketModality] = useState(null);
@@ -44,6 +45,7 @@ export default function PaymentOptions() {
     };
 
     useEffect(() => {
+
         axios.get(`${import.meta.env.VITE_API_URL}/tickets/types`, { headers: { Authorization: `Bearer ${token}` } })
 
             .then((ans) => {
@@ -64,17 +66,9 @@ export default function PaymentOptions() {
         const ticket = ticketsTypes.find((ticket) => ticket.includesHotel === userTicket.includesHotel && ticket.isRemote === userTicket.isRemote)
         return ticket.id;
     }
-
-    const handlePaymentClick = () => {
-        setCallPayment(true);
-    };
-
+    
     return (
         <>
-            {callPayment ? (
-                <Payment userTicket={userTicket} ticketType={ticketType} />
-            ) : (
-                <>
                     <Text title="Ingresso e pagamento" />
                     <SubText title="Primeiro, escolha sua modalidade de ingresso" />
 
@@ -115,12 +109,12 @@ export default function PaymentOptions() {
                     {(ticketModality === 'Online' || showHotel) && (
                         <>
                             <SubText title={`Fechado! O total ficou em ${totalPrice()}. Agora é só confirmar`} />
-                            <BookingButton id={defineTicketTypes()} button="RESERVAR INGRESSO" onClick={handlePaymentClick} />
+                            <BookingButton id={defineTicketTypes()} button="RESERVAR INGRESSO" setTicket={setTicket} setCallPayment={setCallPayment} setStatus={setStatus} />
                         </>
                     )}
                 </>
-            )}
-        </>
+         
+
     );
 }
 

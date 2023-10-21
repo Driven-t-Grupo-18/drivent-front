@@ -17,7 +17,7 @@ export default function HotelsBtn(props) {
 
         } else {
             setChosenHotel({id, name, image})
-            setRoomOptions(chosenHotel)
+            setRoomOptions(rooms)
         }
     }
     useEffect(() => {
@@ -28,9 +28,8 @@ export default function HotelsBtn(props) {
             setSelected(false)
         }
     })
-
     return (
-        <OptionBox onClick={reserved ? () =>{} : selectOption} reserved={reserved ? true : false} selected={selected}>
+        <OptionBox onClick={reserved ? () =>{} : selectOption} reserved={reserved} selected={selected}>
             <img src={image} />
             <h1>{name}</h1>
             <h2>{!reserved ? 'Tipos de acomodação': 'Quarto reservado' }</h2>
@@ -53,7 +52,7 @@ const OptionBox = styled.div`
     border: 1px;
     padding-left: 14px;
     margin-right: 19px!important;
-    cursor: ${(props) => {props.reserved ? '' : 'pointer'}};
+    cursor: pointer;
     font-family: 'Roboto', sans-serif !important;
     &:hover{
         background-color: ${(props) => props.reserved ? "#ffeed2" : (props.selected === true ? "#ffeed29d" : "#eaeaea")};

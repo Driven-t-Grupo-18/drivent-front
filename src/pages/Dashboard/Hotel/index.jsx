@@ -68,11 +68,11 @@ export default function Hotel() {
       {!reserved ?
       <>
       <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-      <StyledSubText>Primeiro, escolha seu hotel</StyledSubText>
+      <StyledSubText >Primeiro, escolha seu hotel</StyledSubText>
       <LocalizationProvider>
         <FormHotel >
           {hotels.map(x => {
-            return <HotelsBtn setChosenRoom={setChosenRoom} chosenHotel={chosenHotel} setChosenHotel={setChosenHotel} setRoomOptions={setRoomOptions} key={x.id} id={x.id} rooms={x.Rooms} image={x.image} name={x.name} typesOfRooms={'single, double e triple'} hotelAvailability={109} />
+            return <HotelsBtn reserved={reserved} setChosenRoom={setChosenRoom} chosenHotel={chosenHotel} setChosenHotel={setChosenHotel} setRoomOptions={setRoomOptions} key={x.id} id={x.id} rooms={x.Rooms} image={x.image} name={x.name}/>
           })
           }
         </FormHotel>
