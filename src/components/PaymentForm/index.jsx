@@ -146,7 +146,7 @@ export default function PaymentForm({ticket}) {
                                         onChange={handleChange('expirationDate')}
                                     />
                                     <Input
-                                        label="CVC"
+                                        label="CVV"
                                         name="cvv"
                                         mask="999"
                                         size="small"
