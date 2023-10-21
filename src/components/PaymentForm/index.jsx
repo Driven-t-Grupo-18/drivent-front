@@ -7,11 +7,11 @@ import { useEffect, useState } from "react";
 import usePayment from "../../hooks/api/usePayment";
 import { useForm } from "../../hooks/useForm";
 import FormValidations from "./FormValidations";
-import Input from "./Input";
 import MuiButton from "@mui/material/Button";
 import { Card } from "./Card";
 import { useCreateTicket } from "../../hooks/api/useTicket";
 import { toast } from 'react-toastify';
+import Input from './Input';
 
 export default function PaymentForm({ticket}) {
     useEffect( () => {
@@ -63,7 +63,7 @@ export default function PaymentForm({ticket}) {
           let newTicket = null;
 
           try {
-            newTicket = {id: 3}; //await createTicket({"ticketTypeId": ticket.id});
+            newTicket = await createTicket({"ticketTypeId": ticket.id});
           } catch (err) {
             console.log(err);            
             toast('Não foi possível realizar o pagamento!');
@@ -146,7 +146,7 @@ export default function PaymentForm({ticket}) {
                                         onChange={handleChange('expirationDate')}
                                     />
                                     <Input
-                                        label="CVC"
+                                        label="CVV"
                                         name="cvv"
                                         mask="999"
                                         size="small"

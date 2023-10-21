@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import PaymentOptions from "../../../components/PaymentProcess";
 import PaymentForm from '../../../components/PaymentForm';
 import { useGetTicket } from '../../../hooks/api/useTicket';
-import styled from 'styled-components';
 import useToken from '../../../hooks/useToken';
 import axios from 'axios';
 
