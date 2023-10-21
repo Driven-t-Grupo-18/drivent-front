@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import PaymentOptions from "../../../components/PaymentProcess";
 import PaymentForm from '../../../components/PaymentForm';
 import { useGetTicket } from '../../../hooks/api/useTicket';
-import styled from 'styled-components';
 import useToken from '../../../hooks/useToken';
 import axios from 'axios';
 
@@ -27,6 +26,7 @@ export default function Payment() {
   return (
     <>
       {status === "pending" && <PaymentOptions setStatus={setStatus} setTicket={setTicket} /> }
+
       {status === "payment" && <PaymentForm ticket={ticket} /> }      
     </>   
   );
