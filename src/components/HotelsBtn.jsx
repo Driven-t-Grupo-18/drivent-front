@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { HotelAvailability, RoomVacancy, TypesOfRooms } from './HotelsUtilitiesFunctions';
+import { HotelAvailability, TypesOfRooms } from './HotelsUtilitiesFunctions';
 
 
 export default function HotelsBtn(props) {
@@ -28,6 +28,7 @@ export default function HotelsBtn(props) {
             setSelected(false)
         }
     })
+    console.log(booked)
     return (
         <OptionBox onClick={reserved ? () =>{} : selectOption} $reserved={reserved.toString()} selected={selected}>
             <img src={image} />
@@ -52,7 +53,7 @@ const OptionBox = styled.div`
     border: 1px;
     padding-left: 14px;
     margin-right: 19px!important;
-    cursor: pointer;
+    cursor:  ${(props) => {props.reserved === 'true' ? 'normal' : 'pointer'}};
     font-family: 'Roboto', sans-serif !important;
     &:hover{
         background-color: ${(props) => props.reserved === 'true' ? "#ffeed2" : (props.selected === true ? "#ffeed29d" : "#eaeaea")};

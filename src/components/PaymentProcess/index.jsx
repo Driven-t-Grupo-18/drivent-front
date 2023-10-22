@@ -8,7 +8,6 @@ import { Text } from '../Text/Text';
 import { BookingButton } from '../BookingButton/BookingButton';
 import axios from 'axios';
 import useToken from '../../hooks/useToken';
-import Payment from '../../pages/Dashboard/Payment';
 
 dayjs.extend(CustomParseFormat);
 
@@ -22,8 +21,6 @@ export default function PaymentOptions(props) {
     const [priceRemote, setPriceRemote] = useState(0);
     const [priceNotRemote, setPriceNotRemote] = useState(0);
     const [priceHotel, setPriceHotel] = useState(0);
-    const [callPayment, setCallPayment] = useState(false);
-    const [ticketType, setTicketType] = useState(undefined);
 
     const mockCard = [
         { name: 'Presencial', price: priceNotRemote, isRemote: false },
@@ -110,7 +107,7 @@ export default function PaymentOptions(props) {
                     {(ticketModality === 'Online' || showHotel) && (
                         <>
                             <SubText title={`Fechado! O total ficou em ${totalPrice()}. Agora é só confirmar`} />
-                            <BookingButton id={defineTicketTypes()} button="RESERVAR INGRESSO" setTicket={setTicket} setCallPayment={setCallPayment} setStatus={setStatus} />
+                            <BookingButton id={defineTicketTypes()} button="RESERVAR INGRESSO" setTicket={setTicket} setStatus={setStatus} />
                         </>
                     )}
                 </>

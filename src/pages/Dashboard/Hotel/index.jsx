@@ -22,14 +22,18 @@ export default function Hotel() {
   const [chosenRoom, setChosenRoom] = useState()
   const [roomOptions, setRoomOptions] = useState([])
   const [reserved, setReserved] = useState(false)
+  const [booked, setBooked] = useState()
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_URL}/booking`, { headers: { Authorization: `Bearer ${token}` } })
     .then( ans => {
       setChosenRoom(ans.data.Room)
+      console.log(ans.data.Room)
 
       axios.get(`${import.meta.env.VITE_API_URL}/hotels/${ans.data.Room.id}`, { headers: { Authorization: `Bearer ${token}` } })
         .then(ans => {
+
           setReserved(true)
+
           setChosenHotel(ans.data)
         }) 
         .catch(console.err)
@@ -45,15 +49,22 @@ export default function Hotel() {
       .then(ans => {
         const resposta = ans.data
         setHotels(resposta)
+
       })
       .catch(err => console.error(err))
     })
+
   }, [token])
 
   function handleReservation(){
+
     axios.post(`${import.meta.env.VITE_API_URL}/booking`, {roomId: chosenRoom.id}, {headers: {Authorization: `Bearer ${token}`}})
     .then(ans => {
+      setBooked(RoomVacancy(hotels, chosenRoom)+1)
+
       setReserved(true)
+
+      
     })
     .catch(err => {
       console.error(err)
@@ -61,7 +72,6 @@ export default function Hotel() {
   
     })
   }
-  const booked = RoomVacancy(hotels, chosenRoom)
 
   return (
     <>
@@ -82,7 +92,7 @@ export default function Hotel() {
         <FormHotel >
         {roomOptions.map(x => {
 
-        return <RoomsBtn key= {x.id} id={x.id} capacity={x.capacity} booked={x.Booking.length || 0} chosenRoom={chosenRoom} setChosenRoom={setChosenRoom} name={x.name} />
+        return <RoomsBtn key= {x.id} id={x.id} hotelId={x.hotelId} capacity={x.capacity} booked={x.Booking.length || 0} chosenRoom={chosenRoom} setChosenRoom={setChosenRoom} name={x.name} />
         })}
         </FormHotel>
       </LocalizationProvider>
@@ -100,7 +110,7 @@ export default function Hotel() {
       <LocalizationProvider>
         <FormHotel >
         
-        <HotelsBtn reserved={reserved} setChosenRoom={setChosenRoom} chosenHotel={chosenHotel} setChosenHotel={setChosenHotel} chosenRoom={chosenRoom} setRoomOptions={setRoomOptions} id={chosenHotel.id} image={chosenHotel.image} name={chosenHotel.name} booked={booked} typeOfRoom={typeOfRoom(chosenRoom.capacity)}/>
+        <HotelsBtn reserved={reserved} setChosenRoom={setChosenRoom} chosenHotel={chosenHotel} booked={booked || RoomVacancy(hotels, chosenRoom)} setChosenHotel={setChosenHotel} chosenRoom={chosenRoom} setRoomOptions={setRoomOptions} id={chosenHotel.id} image={chosenHotel.image} name={chosenHotel.name} typeOfRoom={typeOfRoom(chosenRoom.capacity)}/>
 
         </FormHotel>
       </LocalizationProvider>

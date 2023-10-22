@@ -11,7 +11,7 @@ export default function usePayment() {
     loading: paymentLoading,
     error: paymentError,
     act: paymentProcess
-  } = useAsync((data) => paymentApi.process(data, token), false);
+  } = useAsync((data) => paymentApi.process(data, token), true);
 
   return {
     payment,

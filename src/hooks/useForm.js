@@ -6,7 +6,7 @@ export const useForm = (options) => {
 
   const handleChange = (key, sanitizeFn) => (e) => {
     const value = sanitizeFn ? sanitizeFn(e.target.value) : e.target.value;
-
+    console.log(key)
     setData({
       ...data,
       [key]: value,

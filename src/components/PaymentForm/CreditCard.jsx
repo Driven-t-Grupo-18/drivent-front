@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import Cards from 'react-credit-cards-2';
 import 'react-credit-cards-2/dist/es/styles-compiled.css';
+import creditCardType from 'credit-card-type';
 import MuiButton from "@mui/material/Button";
 import { styled } from 'styled-components';
 import Input from '../Form/Input';
 
-const CreditCard = () => {
+const CreditCard = (props) => {
+  const { errors, handleChange, handleSubmit, data } = props
+  const [issuer, setIssuer] = useState('')
   const [state, setState] = useState({
     number: '',
     expiry: '',
@@ -13,17 +16,16 @@ const CreditCard = () => {
     name: '',
     focus: '',
   });
-
   const handleInputChange = (evt) => {
     const { name, value } = evt.target;
-
+    setIssuer(creditCardType(value)[0]?.niceType)
     setState((prev) => ({ ...prev, [name]: value }));
+    console.log(state)
   }
 
   const handleInputFocus = (evt) => {
     setState((prev) => ({ ...prev, focus: evt.target.name }));
   }
-
   return (
     <Payment>
       <div>
@@ -40,7 +42,7 @@ const CreditCard = () => {
           </Button>
         </SubmitContainer>
       </div>
-      <SCForm id='cartao'>
+      <SCForm id='cartao' onSubmit={handleSubmit}>
         <InputContainer>
           <Input
             type="number"
@@ -49,16 +51,21 @@ const CreditCard = () => {
             value={state.number}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
+            
           />
+          {errors.number && <Error>{errors.number}</Error>}
+
           <h5>E.g.: 49..., 51..., 55..., 22...</h5>
           <Input
             type="text"
             name="name"
-            placeholder="Owner Name"
+            placeholder="Name"
             value={state.name}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
           />
+          {errors.name && <Error>{errors.name}</Error>}
+
         </InputContainer>
 
         <InputContainer>
@@ -66,7 +73,7 @@ const CreditCard = () => {
             <Input
               type="number"
               name="expiry"
-              placeholder="Expiry Date"
+              placeholder="Valid thru"
               value={state.expiry}
               onChange={handleInputChange}
               onFocus={handleInputFocus}
@@ -79,6 +86,10 @@ const CreditCard = () => {
               onChange={handleInputChange}
               onFocus={handleInputFocus}
             />
+          </div>
+          <div>
+          {errors.expirationDate && <Error>{errors.expirationDate}</Error>}                            
+          {errors.cvv && <Error cvv={'cvv'}>{errors.cvv}</Error>}
           </div>
         </InputContainer>
 
@@ -102,6 +113,14 @@ const SubmitContainer = styled.div`
     margin-left: 0px;
   }
 `;
+
+const Error = styled.p`
+  font-family: 'Roboto', sans-serif;
+  color: red;
+  margin: 5px;
+  margin-left: ${props => props.cvv === 'cvv' ? '35px' : ''};
+
+`
 
 const Button = styled(MuiButton)`
   background-color: #E0E0E0 !important;
