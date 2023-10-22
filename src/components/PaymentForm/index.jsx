@@ -7,31 +7,16 @@ import { useEffect, useState } from "react";
 import usePayment from "../../hooks/api/usePayment";
 import { useForm } from "../../hooks/useForm";
 import FormValidations from "./FormValidations";
-import MuiButton from "@mui/material/Button";
 import { Card } from "./Card";
 import { useCreateTicket } from "../../hooks/api/useTicket";
 import { toast } from 'react-toastify';
-import Input from './Input';
+import creditCardType from "credit-card-type";
 
-export default function PaymentForm({ticket}) {
+
+export default function PaymentForm({ticketType, ticket}) {
     useEffect( () => {
-      if (!ticket) return;
+      if (!ticketType) return;
     }, []);
-
-    function ticketType() {
-  
-      let type = '';
-      if (ticket.isRemote) {
-        type += 'Online';
-        return type;
-      }
-  
-      if (!ticket.includesHotel) type += 'Presencial';
-      else type += 'Presencial + Hotel';
-      return type;
-    }
-  
-    const type = ticketType();
 
     const [paymentStatus, setPaymentStatus] = useState('pending');
     const { paymentProcess } = usePayment();
@@ -43,44 +28,24 @@ export default function PaymentForm({ticket}) {
         errors,
     } = useForm({
 
-        validations: FormValidations,
+        //validations: FormValidations,
 
         onSubmit: async (data) => {
-          const issuerIdentification = data.number.slice(0, 4);
-          const firstDigit = parseInt(issuerIdentification[0], 10);
-          const twoDigits = parseInt(issuerIdentification[0] + issuerIdentification[1], 10);
-          const allDigits = parseInt(issuerIdentification, 10);
-    
-          let issuer = null;
-          if (firstDigit === 4) issuer = 'VISA';
-          else if ((twoDigits >= 51 && twoDigits <= 55) || (allDigits >= 2221 && allDigits <= 2720)) issuer = 'MASTERCARD';
-    
-          if (issuer === null) {
-            toast('Cartão Inválido!');
-            return;
-          }
-    
-          let newTicket = null;
 
-          try {
-            newTicket = await createTicket({"ticketTypeId": ticket.id});
-          } catch (err) {
-            console.log(err);            
-            toast('Não foi possível realizar o pagamento!');
-            return;
-          }
+          console.log(data)
+
+          //CARTÃO INVÁLIDO?
 
           const newData = {
-            ticketId: newTicket.id,
+            ticketId: ticket.id,
             cardData: {
-              issuer,
+              issuer: creditCardType(data.number)[0]?.niceType,
               number: data.number,
               name: data.name,
               expirationDate: data.expirationDate,
               cvv: data.cvv,
             }
           };
-    
           try {
             await paymentProcess(newData);
             setPaymentStatus('succeed');
@@ -103,7 +68,7 @@ export default function PaymentForm({ticket}) {
         <>
             <Text title="Ingresso e Pagamento" />
             <SubText title="Ingresso escolhido" />
-            <Card disabled={true} reserved={'reservado'} name={ticket.name} price={ticket.price}/>
+            <Card disabled={true} reserved={'reservado'} name={ticketType?.name} price={ticketType?.price}/>
             <SubText title="Pagamento" />
             <Payment>
                 {/*paymentStatus === 'pending' &&
@@ -167,7 +132,7 @@ export default function PaymentForm({ticket}) {
                         </CardForm>
                     </>
     */}
-    <CreditCard/>
+    <CreditCard data={data} errors={errors} handleChange={handleChange} handleSubmit={handleSubmit}/>
                 {paymentStatus === 'succeed' &&
                     <FinishedPayment>
                         <img src={CheckIcon} />
@@ -198,54 +163,6 @@ const Payment = styled.div`
     align-items: center;
   }
 `;
-
-const CardForm = styled.form`
-    margin: 20px 10px;
-    display: flex;
-    flex-direction: column;
-`;
-
-const InputContainer = styled.div`
-> div {
-  width: 100%;
-  display: flex;
-  gap:15px;
-  min-width: 225px;
-}
-
-h5 {
-  font-size: 13px;
-  margin: 5px 0px 5px 3px;
-  color: #8E8E8E;
-}
-`;
-
-const Error = styled.p`
-  font: Roboto;
-  color: red;
-  margin: 5px;
-`
-
-const SubmitContainer = styled.div`
-  margin-top: 70px;
-  margin-left: -290px;
-  width: 100%!important;
-
-  @media (max-width: 750px) {
-    display: flex;
-    justify-content: center;
-    margin-left: 0px;
-  }
-`;
-
-const Button = styled(MuiButton)`
-  margin-top: 40px !important;
-  background-color: #E0E0E0 !important;
-  color: #000 !important;
-  box-shadow: rgba(149, 157, 165, 0.3) 0px 8px 24px !important;
-  height: 40px;
-  
-`
 
 const FinishedPayment = styled.div`
     margin-top: 20px;

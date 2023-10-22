@@ -3,17 +3,16 @@ import styled from 'styled-components';
 import {BsFillPersonFill, BsPerson, BsPersonFill} from 'react-icons/bs/index';
 
 export default function RoomsBtn(props) {
-    const {id, name, setChosenRoom, chosenRoom, booked, capacity} = props
+    const {id, name, setChosenRoom, chosenRoom, hotelId ,booked, capacity} = props
     const [available, setAvailable] = useState(true)
     const [selected, setSelected] = useState(false)
-    const typeByCapacity = capacity === 1 ? 'Single' : capacity === 2 ? 'Double' : 'Triple'
     function selectOption(e) {
         e.preventDefault();
         if (selected) {
             setChosenRoom()
             setSelected(false)
         } else {
-            setChosenRoom({id, name, booked, type: typeByCapacity})
+            setChosenRoom({id, name, booked: booked+1, capacity, hotelId})
             setSelected(true)
         }
     }
