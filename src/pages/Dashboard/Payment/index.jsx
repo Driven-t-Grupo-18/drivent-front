@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import PaymentOptions from "../../../components/PaymentProcess";
 import PaymentForm from '../../../components/PaymentForm';
-import { useGetTicket } from '../../../hooks/api/useTicket';
 import useToken from '../../../hooks/useToken';
 import axios from 'axios';
 import IncompleteRegistration from '../../../components/PaymentProcess/incompleteRegistration';
@@ -11,6 +10,7 @@ export default function Payment() {
   const [status, setStatus] = useState("pending");
   const [ticketType, setTicketType] = useState(undefined);
   const [ticket, setTicket] = useState();
+  const [paymentStatus, setPaymentStatus] = useState('pending')
   useEffect( () => {
 
     axios.get(`${import.meta.env.VITE_API_URL}/enrollments`, {headers: {Authorization: `Bearer ${token}`}})
