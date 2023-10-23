@@ -7,7 +7,7 @@ import IncompleteRegistration from '../../../components/PaymentProcess/incomplet
 
 export default function Payment() {
   const token = useToken()
-  const [status, setStatus] = useState("pending");
+  const [status, setStatus] = useState("incomplete");
   const [ticketType, setTicketType] = useState(undefined);
   const [ticket, setTicket] = useState();
   const [paymentStatus, setPaymentStatus] = useState('pending')

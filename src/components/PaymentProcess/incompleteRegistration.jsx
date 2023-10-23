@@ -12,7 +12,11 @@ export default function IncompleteRegistration() {
 }
 
 const StyledDiv = styled.div`
-    h1{
+
+    h1{ 
+        margin-top: 250px;
+        margin-left: 120px;
+        width: 600px;
         font-size: 20px;
         font-weight: 400;
         line-height: 23px;
