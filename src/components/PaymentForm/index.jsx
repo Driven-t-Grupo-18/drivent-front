@@ -8,33 +8,29 @@ import usePayment from "../../hooks/api/usePayment";
 import { useForm } from "../../hooks/useForm";
 import FormValidations from "./FormValidations";
 import { Card } from "./Card";
-import { useCreateTicket } from "../../hooks/api/useTicket";
 import { toast } from 'react-toastify';
 import creditCardType from "credit-card-type";
 
 
-export default function PaymentForm({ticketType, ticket}) {
+export default function PaymentForm({ticketType, ticket, paymentStatus, setPaymentStatus}) {
     useEffect( () => {
       if (!ticketType) return;
     }, []);
 
-    const [paymentStatus, setPaymentStatus] = useState('pending');
     const { paymentProcess } = usePayment();
-    const { createTicket } = useCreateTicket();
     const { 
         handleSubmit,
         handleChange,
         data,
+        setData,
         errors,
     } = useForm({
 
-        //validations: FormValidations,
+      validations: FormValidations,
 
         onSubmit: async (data) => {
 
           console.log(data)
-
-          //CARTÃO INVÁLIDO?
 
           const newData = {
             ticketId: ticket.id,
@@ -43,7 +39,7 @@ export default function PaymentForm({ticketType, ticket}) {
               number: data.number,
               name: data.name,
               expirationDate: data.expirationDate,
-              cvv: data.cvv,
+              cvc: data.cvc,
             }
           };
           try {
@@ -60,7 +56,7 @@ export default function PaymentForm({ticketType, ticket}) {
           number: '',
           name: '',
           expirationDate: '',
-          cvv: '',
+          cvc: '',
         },
       });
    
@@ -71,68 +67,7 @@ export default function PaymentForm({ticketType, ticket}) {
             <Card disabled={true} reserved={'reservado'} name={ticketType?.name} price={ticketType?.price}/>
             <SubText title="Pagamento" />
             <Payment>
-                {/*paymentStatus === 'pending' &&
-                    <>
-                        <img src={CreditCard} alt="creditCard"/>
-                        <CardForm onSubmit={handleSubmit}>
-                            <InputContainer>
-                                <Input 
-                                    label = "Card Number"
-                                    name = "number"
-                                    size = "small"
-                                    value = {data.number}
-                                    mask = "9999 9999 9999 9999"
-                                    onChange={handleChange('number')}
-                                />
-                                {errors.number && <Error>{errors.number}</Error>}
-                                <h5>E.g.: 49..., 51..., 55..., 22...</h5>                                
-                            </InputContainer>
-
-                            <InputContainer>
-                              <Input 
-                                label="Name"
-                                name="name"
-                                size="small"
-                                value={data.name}
-                                onChange={handleChange('name')}
-                              />
-                              {errors.name && <Error>{errors.name}</Error>}
-                            </InputContainer>
-
-                            <InputContainer>
-                                <div>
-                                    <Input
-                                        label="Valid Thru"
-                                        name="expirationDate"
-                                        type="text"
-                                        mask="99/99"
-                                        size="small"
-                                        value={data.expirationDate}
-                                        onChange={handleChange('expirationDate')}
-                                    />
-                                    <Input
-                                        label="CVV"
-                                        name="cvv"
-                                        mask="999"
-                                        size="small"
-                                        value={data.cvv}
-                                        onChange={handleChange('cvv')}
-                                    />
-                                </div>
-                                {errors.expirationDate && <Error>{errors.expirationDate}</Error>}                            
-                                {errors.cvv && <Error>{errors.cvv}</Error>}
-                            </InputContainer>
-                            
-
-                            <SubmitContainer>
-                                <Button type="submit">
-                                    Finalizar Pedido
-                                </Button>
-                            </SubmitContainer>                            
-                        </CardForm>
-                    </>
-    */}
-    <CreditCard data={data} errors={errors} handleChange={handleChange} handleSubmit={handleSubmit}/>
+    {paymentStatus === 'pending' && <CreditCard setData={setData} data={data} errors={errors} handleChange={handleChange} handleSubmit={handleSubmit}/>}
                 {paymentStatus === 'succeed' &&
                     <FinishedPayment>
                         <img src={CheckIcon} />
