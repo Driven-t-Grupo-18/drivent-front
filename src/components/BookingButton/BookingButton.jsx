@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 
 // eslint-disable-next-line react/prop-types
 export const BookingButton = ({ button, id, setStatus, setTicket, setTicketType }) => {
-
   const token = useToken()
 
   function handleClick(e) {

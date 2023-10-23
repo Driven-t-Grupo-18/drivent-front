@@ -27,7 +27,6 @@ export default function Hotel() {
     axios.get(`${import.meta.env.VITE_API_URL}/booking`, { headers: { Authorization: `Bearer ${token}` } })
     .then( ans => {
       setChosenRoom(ans.data.Room)
-      console.log(ans.data.Room)
 
       axios.get(`${import.meta.env.VITE_API_URL}/hotels/${ans.data.Room.id}`, { headers: { Authorization: `Bearer ${token}` } })
         .then(ans => {

@@ -86,15 +86,12 @@ export function typeOfRoom(capacity){
     return type
 }
 export function RoomVacancy(hotels, chosenRoom){
-    console.log(hotels)
     const hotel = hotels?.find(objeto => {
         return objeto?.id === chosenRoom?.hotelId 
     })
-    console.log(hotel)
     const room = hotel?.Rooms.find(objeto => {
         return objeto?.id === chosenRoom?.id
     })
-    console.log(room)
 
     return room?.Booking.length
 }

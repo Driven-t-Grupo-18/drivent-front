@@ -20,10 +20,10 @@ const validations = {
       },
     },
   
-    cvv: {
+    cvc: {
       custom: {
         isValid: (value) => parseInt(value?.length, 10) === 3,
-        message: 'CVV inválido',
+        message: 'CVC inválido',
       },
     },
   

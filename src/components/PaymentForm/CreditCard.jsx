@@ -94,7 +94,7 @@ const CreditCard = (props) => {
           </div>
           <div>
           {errors.expirationDate && <Error>{errors.expirationDate}</Error>}                            
-          {errors.cvv && <Error $cvv={'cvv'}>{errors.cvv}</Error>}
+          {errors.cvc && <Error $cvc={'cvc'}>{errors.cvc}</Error>}
           </div>
         </InputContainer>
 
@@ -122,7 +122,7 @@ const Error = styled.p`
   font-family: 'Roboto', sans-serif;
   color: red;
   margin: 5px;
-  margin-left: ${props => props.$cvv === 'cvv' ? '35px' : ''};
+  margin-left: ${props => props.$cvc === 'cvc' ? '35px' : ''};
 
 `
 
