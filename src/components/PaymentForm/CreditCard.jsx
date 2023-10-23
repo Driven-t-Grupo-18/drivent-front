@@ -7,8 +7,7 @@ import { styled } from 'styled-components';
 import Input from '../Form/Input';
 
 const CreditCard = (props) => {
-  const { errors, handleChange, handleSubmit, data } = props
-  const [issuer, setIssuer] = useState('')
+  const { errors, handleSubmit, setData } = props
   const [state, setState] = useState({
     number: '',
     expiry: '',
@@ -16,13 +15,14 @@ const CreditCard = (props) => {
     name: '',
     focus: '',
   });
+
   const handleInputChange = (evt) => {
     const { name, value } = evt.target;
-    setIssuer(creditCardType(value)[0]?.niceType)
-    setState((prev) => ({ ...prev, [name]: value }));
-    console.log(state)
-  }
 
+    setState((prev) => ({ ...prev, [name]: value }));
+    setData((prev) => ({ ...prev, [name === 'expiry' ? 'expirationDate' : name]: value }))
+
+  }
   const handleInputFocus = (evt) => {
     setState((prev) => ({ ...prev, focus: evt.target.name }));
   }
@@ -47,6 +47,8 @@ const CreditCard = (props) => {
           <Input
             type="number"
             name="number"
+            mask='9999 9999 9999 9999'
+            maskChar='_'
             placeholder="Card Number"
             value={state.number}
             onChange={handleInputChange}
@@ -75,6 +77,8 @@ const CreditCard = (props) => {
               name="expiry"
               placeholder="Valid thru"
               value={state.expiry}
+              mask='99/99'
+              maskChar='_'
               onChange={handleInputChange}
               onFocus={handleInputFocus}
             />
@@ -82,6 +86,7 @@ const CreditCard = (props) => {
               type="number"
               name="cvc"
               placeholder="CVC"
+              mask={creditCardType(state.number)[0]?.niceType === 'American Express' ? '9999' : '999'}
               value={state.cvc}
               onChange={handleInputChange}
               onFocus={handleInputFocus}
@@ -89,7 +94,7 @@ const CreditCard = (props) => {
           </div>
           <div>
           {errors.expirationDate && <Error>{errors.expirationDate}</Error>}                            
-          {errors.cvv && <Error cvv={'cvv'}>{errors.cvv}</Error>}
+          {errors.cvv && <Error $cvv={'cvv'}>{errors.cvv}</Error>}
           </div>
         </InputContainer>
 
@@ -103,7 +108,6 @@ const SubmitContainer = styled.div`
   display: flex;
   justify-content: start;
   align-items: center;
-  position: absolute;
   @media (max-width: 750px) {
     position: static;
     width: 100%!important;
@@ -118,7 +122,7 @@ const Error = styled.p`
   font-family: 'Roboto', sans-serif;
   color: red;
   margin: 5px;
-  margin-left: ${props => props.cvv === 'cvv' ? '35px' : ''};
+  margin-left: ${props => props.$cvv === 'cvv' ? '35px' : ''};
 
 `
 
@@ -136,10 +140,9 @@ const Button = styled(MuiButton)`
 const Payment = styled.div`
   display: flex;
   width: 100%;
-  height: 225px;
+  height: 270px;
   display: flex;
-  align-items: center;
-
+  align-items: start;
   @media (max-width: 750px) {
     flex-direction: column;
     align-items: center;

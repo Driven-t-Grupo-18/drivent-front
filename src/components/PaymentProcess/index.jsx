@@ -12,7 +12,7 @@ import useToken from '../../hooks/useToken';
 dayjs.extend(CustomParseFormat);
 
 export default function PaymentOptions(props) {
-    const {setTicket, setStatus} = props
+    const {setTicket, setStatus, setTicketType} = props
     const token = useToken()
     const [userTicket, setUserTicket] = useState({ ticketStatus: '', ticketValue: '', includesHotel: false, isRemote: false });
     const [ticketModality, setTicketModality] = useState(null);
@@ -107,7 +107,7 @@ export default function PaymentOptions(props) {
                     {(ticketModality === 'Online' || showHotel) && (
                         <>
                             <SubText title={`Fechado! O total ficou em ${totalPrice()}. Agora é só confirmar`} />
-                            <BookingButton id={defineTicketTypes()} button="RESERVAR INGRESSO" setTicket={setTicket} setStatus={setStatus} />
+                            <BookingButton id={defineTicketTypes()} button="RESERVAR INGRESSO" setTicket={setTicket} setTicketType={setTicketType} setStatus={setStatus} />
                         </>
                     )}
                 </>

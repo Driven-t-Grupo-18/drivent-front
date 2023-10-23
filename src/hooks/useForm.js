@@ -3,7 +3,7 @@ import { useState } from 'react';
 export const useForm = (options) => {
   const [data, setData] = useState(options?.initialValues || {});
   const [errors, setErrors] = useState({});
-
+console.log(options)
   const handleChange = (key, sanitizeFn) => (e) => {
     const value = sanitizeFn ? sanitizeFn(e.target.value) : e.target.value;
     console.log(key)
