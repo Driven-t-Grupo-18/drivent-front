@@ -38,8 +38,8 @@ export default function Payment() {
   return (
     <>
       {status === "incomplete" && <IncompleteRegistration /> }
-      {status === "pending" && <PaymentOptions setStatus={setStatus} setTicket={setTicketType} /> }
-      {status === "payment" && <PaymentForm ticket={ticket} ticketType={ticketType} /> }      
+      {status === "pending" && <PaymentOptions setStatus={setStatus} setTicketType={setTicketType} ticketType={ticketType} setTicket={setTicket} /> }
+      {status === "payment" && <PaymentForm ticket={ticket} paymentStatus={paymentStatus} setPaymentStatus={setPaymentStatus} ticketType={ticketType} /> }      
     </>   
   );
 }

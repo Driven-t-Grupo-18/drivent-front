@@ -30,7 +30,6 @@ export default function PaymentForm({ticketType, ticket, paymentStatus, setPayme
 
         onSubmit: async (data) => {
 
-          console.log(data)
 
           const newData = {
             ticketId: ticket.id,

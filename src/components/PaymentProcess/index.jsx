@@ -61,6 +61,8 @@ export default function PaymentOptions(props) {
 
     function defineTicketTypes() {
         const ticket = ticketsTypes.find((ticket) => ticket.includesHotel === userTicket.includesHotel && ticket.isRemote === userTicket.isRemote)
+
+
         return ticket.id;
     }
     
