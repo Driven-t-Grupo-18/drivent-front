@@ -1,34 +1,53 @@
-import { SignIn, XCircle } from "@phosphor-icons/react";
-import React from "react";
-import styled from "styled-components"
-import Button from "../../../components/Form/Button";
-import { SubText } from "../../../components/SubText/SubText";
-import { Text } from "../../../components/Text/Text";
+import React from 'react';
+import styled from 'styled-components';
+// import useTicket from '../../../hooks/api/useTicket';
+import Button from '../../../components/Form/Button';
+import { SubText } from '../../../components/SubText/SubText';
+import { Text } from '../../../components/Text/Text';
+import { useContext, useEffect, useState } from 'react';
+import api from '../../../services/api';
 
-const objButton = [
-  { text: "Sexta, 22/10" },
-  { text: "Sábado, 23/10" },
-  { text: "Domingo, 24/10" }
-]
 export default function Activities() {
+  // const { ticket } = useTicket();
+  // const { eventInfo } = useContext(EventInfoContext);
+  const [activities, setActivities] = useState([]);
+
+  // const days = new Date(eventInfo.startsAt);
+
+  // const activitiesDays = [];
+  // for (let i = 1; i < 4; i++) {
+  //   const currentDate = new Date(days.getTime() + i * 24 * 60 * 60 * 1000);
+  //   const activityDay = {
+  //     weekDay: currentDate.toLocaleDateString('pt-BR', { weekday: 'long' }),
+  //     date: currentDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+  //   };
+  //   activitiesDays.push(activityDay);
+  // }
+  const activitiesDays = [
+    { weekDay: 'Segunda-feira', date: '10/05' },
+    { weekDay: 'Terça-feira', date: '11/05' },
+    { weekDay: 'Quarta-feira', date: '12/05' },
+  ];
+
   return (
     <>
       <Text title="Escolha de atividades" />
       <SubText title="Primeiro, filtre pelo dia do evento:" />
-      <StyledContainer >
-        {objButton.map((item, index) =>
-          <StyledButton
-            size="large" key={index}>{item.text}</StyledButton>
-        )}
+      <StyledContainer>
+        {activitiesDays.map((day) => (
+          <StyledButton size="large" key={day} weekDay={day.weekDay} date={day.date} setActivities={setActivities} />
+        ))}
       </StyledContainer>
       <StyledArea>
         <table>
-          <tr>
-            <th>Auditório Principal</th>
-            <th>Auditório Lateral</th>
-            <th>Sala de Workshop</th>
-          </tr>
-          <tr>
+          <thead>
+            <tr>
+              <th>Auditório Principal</th>
+              <th>Auditório Lateral</th>
+              <th>Sala de Workshop</th>
+            </tr>
+          </thead>
+          <tbody>
             <td>
               <StyledActivity>
                 <StyledInfo>
@@ -51,33 +70,36 @@ export default function Activities() {
                 </StyledIcon>
               </StyledActivity>
             </td>
-            <td><StyledActivity>
-              <StyledInfo>
-                <h1>Palestra y</h1>
-                <p>10:00 - 11:00</p>
-              </StyledInfo>
-              <StyledIcon>
-                <ion-icon name="close-circle-outline"></ion-icon>
-                <p>Esgotado</p>
-              </StyledIcon>
-            </StyledActivity></td>
-            <td><StyledActivity>
-              <StyledInfo>
-                <h1>Palestra z</h1>
-                <p>9:00 - 10:00</p>
-              </StyledInfo>
-              <StyledIcon>
-                <ion-icon name="close-circle-outline"></ion-icon>
-                <p>Esgotado</p>
-              </StyledIcon>
-            </StyledActivity></td>
-          </tr>
+            <td>
+              <StyledActivity>
+                <StyledInfo>
+                  <h1>Palestra y</h1>
+                  <p>10:00 - 11:00</p>
+                </StyledInfo>
+                <StyledIcon>
+                  <ion-icon name="close-circle-outline"></ion-icon>
+                  <p>Esgotado</p>
+                </StyledIcon>
+              </StyledActivity>
+            </td>
+            <td>
+              <StyledActivity>
+                <StyledInfo>
+                  <h1>Palestra z</h1>
+                  <p>9:00 - 10:00</p>
+                </StyledInfo>
+                <StyledIcon>
+                  <ion-icon name="close-circle-outline"></ion-icon>
+                  <p>Esgotado</p>
+                </StyledIcon>
+              </StyledActivity>
+            </td>
+          </tbody>
         </table>
       </StyledArea>
     </>
-  )
+  );
 }
-
 
 const StyledContainer = styled.div`
   display: flex;
@@ -86,14 +108,13 @@ const StyledContainer = styled.div`
 `;
 
 const StyledButton = styled(Button)`
-  background-color: #E0E0E0 !important;
+  background-color: #e0e0e0 !important;
   color: #000000 !important;
 
   &:hover {
-    background-color: #FFD37D !important;
+    background-color: #ffd37d !important;
   }
 `;
-
 
 const StyledArea = styled.div`
   margin-top: 30px;
@@ -101,13 +122,13 @@ const StyledArea = styled.div`
   table {
     width: 864px;
   }
-  td{
-    border: 1px solid #D7D7D7;
+  td {
+    border: 1px solid #d7d7d7;
     height: 330px;
     width: 288px;
   }
-  th{
-    color: #7B7B7B;
+  th {
+    color: #7b7b7b;
     font-size: 17px;
     font-weight: 400;
     padding-bottom: 10px;
@@ -115,19 +136,19 @@ const StyledArea = styled.div`
 `;
 
 const StyledActivity = styled.div`
-  background-color: #F1F1F1;
+  background-color: #f1f1f1;
   width: 265px;
   height: 79px;
   margin-top: 10px;
   margin-left: 10px;
   border-radius: 5px;
   display: flex;
-  h1{
+  h1 {
     color: #343434;
     font-size: 12px;
     font-weight: 700;
   }
-  p{
+  p {
     color: #343434;
     font-size: 12px;
     font-weight: 400;
@@ -145,7 +166,7 @@ const StyledIcon = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-left: 1px solid #CFCFCF;
+  border-left: 1px solid #cfcfcf;
   ion-icon {
     width: 20px;
     color: #078632;
@@ -158,7 +179,7 @@ const StyledIcon = styled.div`
     top: 15px;
     left: 18px;
   }
-  p{
+  p {
     color: #078632;
     font-size: 9px;
   }
