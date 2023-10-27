@@ -1,51 +1,72 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {BsFillPersonFill, BsPerson, BsPersonFill} from 'react-icons/bs/index';
+import { BsPerson, BsPersonFill } from 'react-icons/bs/index';
 
 export default function RoomsBtn(props) {
-    const {id, name, setChosenRoom, chosenRoom, hotelId ,booked, capacity} = props
+    const { id, name, firstChosenRoom, setChosenRoom, chosenRoom, hotelId, booked, capacity } = props
     const [available, setAvailable] = useState(true)
     const [selected, setSelected] = useState(false)
+    const [alreadyRunned, setAlreadyRunned] = useState(false)
     function selectOption(e) {
         e.preventDefault();
-        if (selected) {
+        if (selected && chosenRoom) {
             setChosenRoom()
             setSelected(false)
         } else {
-            setChosenRoom({id, name, booked: booked+1, capacity, hotelId})
+            setChosenRoom({ id, name, booked: booked + 1, capacity, hotelId })
             setSelected(true)
         }
     }
 
     useEffect(() => {
-        if (capacity === booked) {
+        if (!chosenRoom && !alreadyRunned) {
+            setChosenRoom(firstChosenRoom)
+        }
+
+        if (capacity === booked && firstChosenRoom.id !== id) {
             setAvailable(false)
         }
-        else{
+        else {
             setAvailable(true)
         }
 
         if (chosenRoom?.id === id) {
             setSelected(true)
-        }
-        else{
+        } else if (id === firstChosenRoom?.id && !chosenRoom && !alreadyRunned) {
+            setSelected(true)
+        } else {
             setSelected(false)
         }
+        setAlreadyRunned(true)
 
-    })
-    
+    }, [chosenRoom])
+
     function vacancy() {
         const result = []
-        for (let i=0; i<capacity-booked; i++){
-            result.push("free") 
-        }
-        for (let i=0; i<booked; i++){
-            result.push("occupied")
+        if (id === firstChosenRoom?.id) {
+            if (available){
+                for (let i = -1; i < capacity - booked; i++) {
+                result.push("free")
+            }}
+
+            for (let i = 0; i < booked-1; i++) {
+                result.push("occupied")
+            }
+
+        } else {
+            for (let i = 0; i < capacity - booked; i++) {
+                result.push("free")
+            }
+
+            for (let i = 0; i < booked; i++) {
+                result.push("occupied")
+            }
         }
 
-        if(selected){
+
+        if (selected) {
             const i = result.indexOf('occupied')
-            i === -1 ? result.splice(-1, 1, "selected") : result.splice(i-1, 1, "selected")
+            i === -1 ? result.splice(-1, 1, "selected") : result.splice(i - 1, 1, "selected")
         }
         return result
     }
@@ -54,9 +75,9 @@ export default function RoomsBtn(props) {
         <OptionBox disabled={!available} onClick={e => available ? selectOption(e) : alert('Esse quarto já está lotado! Por favor, escolha outro.')} selected={selected}>
             <h1>{name}</h1>
             <div>
-            {vacancy().map((vaga, index )=> {
-                return vaga === 'free' ? <BsPerson key={index}/> : <BsPersonFill key={index} color={!available ? '#8C8C8C': (vaga === 'selected' ? "#FF4791" : "#000000")}/> 
-            })}
+                {vacancy().map((vaga, index) => {
+                    return vaga === 'free' ? <BsPerson key={index} /> : <BsPersonFill key={index} color={!available ? '#8C8C8C' : (vaga === 'selected' ? "#FF4791" : "#000000")} />
+                })}
             </div>
         </OptionBox>
     )
@@ -64,7 +85,7 @@ export default function RoomsBtn(props) {
 
 
 const OptionBox = styled.div`
-    background-color: ${(props) => (!props.available === true ? (props.selected === true ? "#ffeed2" : "#ebebeb"): "#CECECE" )};
+    background-color: ${(props) => (!props.available === true ? (props.selected === true ? "#ffeed2" : "#ebebeb") : "#CECECE")};
     width: 190px !important;
     height: 45px;
     top: 437px;

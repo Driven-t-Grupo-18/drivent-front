@@ -12,74 +12,75 @@ import { toast } from 'react-toastify';
 import creditCardType from "credit-card-type";
 
 
-export default function PaymentForm({ticketType, ticket, paymentStatus, setPaymentStatus}) {
-    useEffect( () => {
-      if (!ticketType) return;
-    }, []);
 
-    const { paymentProcess } = usePayment();
-    const { 
-        handleSubmit,
-        handleChange,
-        data,
-        setData,
-        errors,
-    } = useForm({
+export default function PaymentForm({ ticketType, ticket, paymentStatus, setPaymentStatus }) {
+  useEffect(() => {
+    if (!ticketType) return;
+  }, []);
 
-      validations: FormValidations,
+  const { paymentProcess } = usePayment();
+  const {
+    handleSubmit,
+    handleChange,
+    data,
+    setData,
+    errors,
+  } = useForm({
 
-        onSubmit: async (data) => {
+    validations: FormValidations,
+
+    onSubmit: async (data) => {
 
 
-          const newData = {
-            ticketId: ticket.id,
-            cardData: {
-              issuer: creditCardType(data.number)[0]?.niceType,
-              number: data.number,
-              name: data.name,
-              expirationDate: data.expirationDate,
-              cvc: data.cvc,
-            }
-          };
-          try {
-            await paymentProcess(newData);
-            setPaymentStatus('succeed');
-            toast('Pagamento efetuado com sucesso!');
-          } catch (err) {
-            console.log(err)
-            toast('Não foi possível realizar o pagamento!');
-          }
-        },
-    
-        initialValues: {
-          number: '',
-          name: '',
-          expirationDate: '',
-          cvc: '',
-        },
-      });
-   
-    return(
-        <>
-            <Text title="Ingresso e Pagamento" />
-            <SubText title="Ingresso escolhido" />
-            <Card disabled={true} reserved={'reservado'} name={ticketType?.name} price={ticketType?.price}/>
-            <SubText title="Pagamento" />
-            <Payment>
-    {paymentStatus === 'pending' && <CreditCard setData={setData} data={data} errors={errors} handleChange={handleChange} handleSubmit={handleSubmit}/>}
-                {paymentStatus === 'succeed' &&
-                    <FinishedPayment>
-                        <img src={CheckIcon} />
-                        <div>
-                            <h2>Pagamento confirmado!</h2>
-                            <h3>Prossiga para escolha de hospedagem e atividades</h3>
-                        </div>
-                    </FinishedPayment>
-                }
+      const newData = {
+        ticketId: ticket.id,
+        cardData: {
+          issuer: creditCardType(data.number)[0]?.niceType,
+          number: data.number,
+          name: data.name,
+          expirationDate: data.expirationDate,
+          cvc: data.cvc,
+        }
+      };
+      try {
+        await paymentProcess(newData);
+        setPaymentStatus('succeed');
+        toast('Pagamento efetuado com sucesso!');
+      } catch (err) {
+        console.log(err)
+        toast('Não foi possível realizar o pagamento!');
+      }
+    },
 
-            </Payment>  
-        </>
-    );
+    initialValues: {
+      number: '',
+      name: '',
+      expirationDate: '',
+      cvc: '',
+    },
+  });
+
+  return (
+    <>
+      <Text title="Ingresso e Pagamento" />
+      <SubText title="Ingresso escolhido" />
+      <Card disabled={true} reserved={'reservado'} name={ticketType?.name} price={ticketType?.price} />
+      <SubText title="Pagamento" />
+      <Payment>
+        {paymentStatus === 'pending' && <CreditCard setData={setData} data={data} errors={errors} handleChange={handleChange} handleSubmit={handleSubmit} />}
+        {paymentStatus === 'succeed' &&
+          <FinishedPayment>
+            <img src={CheckIcon} />
+            <div>
+              <h2>Pagamento confirmado!</h2>
+              <h3>Prossiga para escolha de hospedagem e atividades</h3>
+            </div>
+          </FinishedPayment>
+        }
+
+      </Payment>
+    </>
+  );
 }
 
 const Payment = styled.div`
