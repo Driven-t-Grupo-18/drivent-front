@@ -11,35 +11,37 @@ export default function Payment() {
   const [ticketType, setTicketType] = useState(undefined);
   const [ticket, setTicket] = useState();
   const [paymentStatus, setPaymentStatus] = useState('pending')
-  useEffect( () => {
+  useEffect(() => {
 
-    axios.get(`${import.meta.env.VITE_API_URL}/enrollments`, {headers: {Authorization: `Bearer ${token}`}})
-    .then( () => {
-      axios.get(`${import.meta.env.VITE_API_URL}/tickets`, {headers: {Authorization: `Bearer ${token}`}})
-      .then( res => {
-          setTicketType(res.data.TicketType)
-          setStatus('payment')
-          setTicket(res.data)
+    axios.get(`${import.meta.env.VITE_API_URL}/enrollments`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => {
+        axios.get(`${import.meta.env.VITE_API_URL}/tickets`, { headers: { Authorization: `Bearer ${token}` } })
+          .then(res => {
+            setTicketType(res.data.TicketType)
+            setTicket(res.data)
+            setStatus('payment')
+            if (res.data.status === "PAID") {
+              setPaymentStatus('succeed')
+            }
+          })
+          .catch(err => {
+            if (err.response?.status === 404) return setStatus('pending')
+            console.error(err)
+            setStatus('pending')
+
+          })
       })
       .catch(err => {
-        if (err.response?.status === 404) return setStatus('pending')
         console.error(err)
-        setStatus('pending')
+        setStatus('incomplete')
+
       })
-        if (ticketType && status !== "finished") setStatus("finished");
-    }
-    )
-    .catch(err => {
-      console.error(err)
-      setStatus('incomplete')
-    })
   }, [token]);
-  
   return (
     <>
-      {status === "incomplete" && <IncompleteRegistration /> }
-      {status === "pending" && <PaymentOptions setStatus={setStatus} setTicketType={setTicketType} ticketType={ticketType} setTicket={setTicket} /> }
-      {status === "payment" && <PaymentForm ticket={ticket} paymentStatus={paymentStatus} setPaymentStatus={setPaymentStatus} ticketType={ticketType} /> }      
-    </>   
+      {status === "incomplete" && <IncompleteRegistration />}
+      {status === "pending" && <PaymentOptions setStatus={setStatus} setTicketType={setTicketType} setTicket={setTicket} />}
+      {status === "payment" && <PaymentForm ticket={ticket} paymentStatus={paymentStatus} setPaymentStatus={setPaymentStatus} ticketType={ticketType} />}
+    </>
   );
 }

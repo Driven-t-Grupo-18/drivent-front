@@ -93,6 +93,8 @@ export function RoomVacancy(hotels, chosenRoom){
         return objeto?.id === chosenRoom?.id
     })
 
+    
+
     return room?.Booking.length
 }
 
