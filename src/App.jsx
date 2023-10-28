@@ -29,6 +29,7 @@ export default function App() {
         <UserProvider>
           <Router>
             <Routes>
+
               <Route path="/" element={<Countdown />} />
               <Route path="/enroll" element={<Enroll />} />
               <Route path="/sign-in" element={<SignIn />} />
