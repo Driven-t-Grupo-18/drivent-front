@@ -14,6 +14,7 @@ import UserContext from '../../contexts/UserContext';
 
 import useSignIn from '../../hooks/api/useSignIn';
 
+
 import qs from "query-string";
 import axios from 'axios';
 
@@ -21,7 +22,7 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { loadingSignIn, signIn } = useSignIn();
+  const { loadingSignIn, signIn} = useSignIn();
 
   const { eventInfo } = useContext(EventInfoContext);
   const { setUserData } = useContext(UserContext);
@@ -32,7 +33,7 @@ export default function SignIn() {
     event.preventDefault();
 
     try {
-      const userData = await signIn(email, password);
+      const userData = await signIn({email : email, password : password});
       setUserData(userData);
       toast('Login realizado com sucesso!');
       navigate('/dashboard');
@@ -42,12 +43,13 @@ export default function SignIn() {
   }
 
   function redirectToGitHub() {
+
     const GITHUB_URL = 'https://github.com/login/oauth/authorize';
     const params = {
       response_type: 'code',
       scope: 'user',
-      client_id: process.env.CLIENT_ID,
-      redirect_uri: process.env.REDIRECT_URL
+      client_id: import.meta.env.VITE_API_GITHUB_CLIENT_ID,
+      redirect_uri: import.meta.env.VITE_API_GITHUB_REDIRECT_URL
     }
     const queryStrings = qs.stringify(params);
     const authURL = `${GITHUB_URL}?${queryStrings}`;
@@ -55,21 +57,16 @@ export default function SignIn() {
   }
 
   window.onload = async () => {
-    document.querySelector(".login").addEventListener("click", redirectToGitHub);
-
-    //const urlParams = new URLSearchParams(window.location.search);
-    //const code = urlParams.get("code");
-
-    const { code } = qs.parseUrl(window.location.href).query;
+    const url = new URL(window.location.href);
+    const code = url.searchParams.get("code");
     if(code) {
+      console.log("Code from Github");
+
       try {
-        const response = await axios.post(`${process.env.VITE_API_URL}/sign-in`, { code });
-        const user = response.data;
-        console.log(user);
-        //const { token } = response.data;
-        //localStorage.setItem("token", token);
-        //window.location.href = "/profile.html"
-        
+        const userData = await signIn({code : code});
+        setUserData(userData);
+        toast('Login realizado com sucesso!');
+        navigate('/dashboard');
       } catch (err) {
         toast('Não foi possível fazer o login!')
         console.log("err", err);
