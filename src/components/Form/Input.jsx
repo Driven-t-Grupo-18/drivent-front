@@ -11,7 +11,13 @@ function nameToPlaceholder(name){
     case 'cvc':
       return 'CVC';
     case 'number':
-      return 'Card Number'
+      return 'Card Number';
+    case 'cpf':
+      return 'CPF';
+    case 'phone':
+      return 'Celular';
+    case 'cep':
+      return 'CEP';
   }
 }
 export default function Input({ mask = '', maskChar = '', formatChars, variant = 'outlined', value='', onChange = () => 0, ...props }) {
