@@ -1,105 +1,184 @@
 import React from 'react';
 import styled from 'styled-components';
 // import useTicket from '../../../hooks/api/useTicket';
-import Button from '../../../components/Form/Button';
+import Button from '../../../components/Form/ActivitiesButton';
 import { SubText } from '../../../components/SubText/SubText';
 import { Text } from '../../../components/Text/Text';
 import { useContext, useEffect, useState } from 'react';
+import ActivityBox from '../../../components/Activities/ActivityBox';
+import axios from 'axios';
 import api from '../../../services/api';
 
+import useToken, { useTicket } from '../../../hooks/useToken';
+import { toast } from 'react-toastify';
+
+function translateWeekdays(number) {
+  const objRef = {
+    0: 'Domingo',
+    1: 'Segunda-feira',
+    2: 'Terça-feira',
+    3: 'Quarta-feira',
+    4: 'Quinta-feira',
+    5: 'Sexta-feira',
+    6: 'Sábado'
+  }
+
+  return objRef[number]
+}
+
 export default function Activities() {
-  // const { ticket } = useTicket();
-  // const { eventInfo } = useContext(EventInfoContext);
+  const token = useToken()
   const [activities, setActivities] = useState([]);
+  const [selectedDay, setSelectedDay] = useState()
+  const [activitiesDays, setActivitiesDays] = useState([])
+  const [selectedActivities, setSelectedActivities] = useState([])
+  const [userActivities, setUserActivities] = useState([])
+  const [notPaid, setNotPaid] = useState(false)
+  const [isRemote, setIsRemote] = useState(false)
 
-  // const days = new Date(eventInfo.startsAt);
 
-  // const activitiesDays = [];
-  // for (let i = 1; i < 4; i++) {
-  //   const currentDate = new Date(days.getTime() + i * 24 * 60 * 60 * 1000);
-  //   const activityDay = {
-  //     weekDay: currentDate.toLocaleDateString('pt-BR', { weekday: 'long' }),
-  //     date: currentDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
-  //   };
-  //   activitiesDays.push(activityDay);
-  // }
-  const activitiesDays = [
-    { weekDay: 'Segunda-feira', date: '10/05' },
-    { weekDay: 'Terça-feira', date: '11/05' },
-    { weekDay: 'Quarta-feira', date: '12/05' },
-  ];
+  useEffect(() => {
+
+    async function defineDaysOfActivities() {
+      try {
+        const ticket = await useTicket(token)
+        if (!ticket || ticket?.status === 'RESERVED') return setNotPaid(true)
+        if (ticket.TicketType.isRemote) return setIsRemote(true)
+        const response = await api.get('activities', { headers: { Authorization: `Bearer ${token}` } })
+        setActivitiesDays(response.data.map(activitiesDay => {
+          const activityDate = new Date(activitiesDay.startsAt)
+          const weekDay = (translateWeekdays(activityDate.getDay()))
+          const date = ((activityDate.getDay().toString()).padStart(2, '0') + '/' + (activityDate.getMonth().toString()).padStart(2, '0'))
+          activitiesDay.weekDay = weekDay
+          activitiesDay.date = date
+          return activitiesDay
+        }))
+      }
+      catch (err) {
+        console.log(err)
+      }
+    }
+    defineDaysOfActivities()
+  }, [token])
+  async function filterActivities(id) {
+    setSelectedActivities([])
+
+    try {
+      const activitiesFilter = await api.get(`/activities/Day/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setUserActivities(activitiesFilter.data.userActivitiesIds);
+      const response = activitiesFilter.data.activitiesFromDayWithOccupation
+      const newArray = response.map(activity => {
+        if (activitiesFilter.data.userActivitiesIds?.indexOf(activity.id) >= 0) {
+          selectedActivities.push(activity)
+          return { ...activity, userRegistered: true }
+        } else {
+          return { ...activity, userRegistered: false }
+        }
+      })
+
+      const filteredBySchedule = selectedActivities.length === 0 ? newArray : newArray.map(activity => {
+        if (activity.userRegistered) return activity
+
+        const permitted = selectedActivities.find((elemento, index) => {
+          if (elemento.activityDayId === activity.activityDayId) {
+            if (index === 0 && elemento.startsAt > activity.endsAt) return true
+
+            if (index === selectedActivities.length - 1 && elemento.endsAt < activity.startsAt) return true
+
+            if (elemento.startsAt > activity.endsAt && selectedActivities[index - 1].endsAt < activity.startsAt) return true
+            if (index === 0 || index === selectedActivities.length - 1) return false
+            console.log(activity.endsAt > selectedActivities[index - 1]?.endsAt)
+
+          }
+        })
+        if (permitted) return activity
+      })
+
+      console.log(filteredBySchedule.filter(elemento => {
+        if (elemento?.id) return true
+      }))
+      setActivities(filteredBySchedule.filter(elemento => {
+        if (elemento?.id) return true
+      }));
+    }
+    catch (err) {
+      console.error(err)
+      toast('Não foi possível carregar as atividades. Tente novamente')
+    }
+  }
 
   return (
     <>
       <Text title="Escolha de atividades" />
-      <SubText title="Primeiro, filtre pelo dia do evento:" />
-      <StyledContainer>
-        {activitiesDays.map((day) => (
-          <StyledButton size="large" key={day} weekDay={day.weekDay} date={day.date} setActivities={setActivities} />
-        ))}
-      </StyledContainer>
-      <StyledArea>
-        <table>
-          <thead>
-            <tr>
-              <th>Auditório Principal</th>
-              <th>Auditório Lateral</th>
-              <th>Sala de Workshop</th>
-            </tr>
-          </thead>
-          <tbody>
-            <td>
-              <StyledActivity>
-                <StyledInfo>
-                  <h1>Minecraft: montando o PC ideal</h1>
-                  <p>09:00 - 10:00</p>
-                </StyledInfo>
-                <StyledIcon>
-                  <ion-icon name="log-in-outline"></ion-icon>
-                  <p>27 vagas</p>
-                </StyledIcon>
-              </StyledActivity>
-              <StyledActivity>
-                <StyledInfo>
-                  <h1>Palestra x</h1>
-                  <p>10:00 - 11:00</p>
-                </StyledInfo>
-                <StyledIcon>
-                  <ion-icon name="close-circle-outline"></ion-icon>
-                  <p>Esgotado</p>
-                </StyledIcon>
-              </StyledActivity>
-            </td>
-            <td>
-              <StyledActivity>
-                <StyledInfo>
-                  <h1>Palestra y</h1>
-                  <p>10:00 - 11:00</p>
-                </StyledInfo>
-                <StyledIcon>
-                  <ion-icon name="close-circle-outline"></ion-icon>
-                  <p>Esgotado</p>
-                </StyledIcon>
-              </StyledActivity>
-            </td>
-            <td>
-              <StyledActivity>
-                <StyledInfo>
-                  <h1>Palestra z</h1>
-                  <p>9:00 - 10:00</p>
-                </StyledInfo>
-                <StyledIcon>
-                  <ion-icon name="close-circle-outline"></ion-icon>
-                  <p>Esgotado</p>
-                </StyledIcon>
-              </StyledActivity>
-            </td>
-          </tbody>
-        </table>
-      </StyledArea>
+      {notPaid ? <AccessDeniedMessage>Você precisa ter confirmado pagamento antes <br /> de fazer a escolha de atividades</AccessDeniedMessage> :
+        isRemote ? <AccessDeniedMessage>Sua modalidade de ingresso não necessita escolher <br/> atividade. Você terá acesso a todas as atividades.</AccessDeniedMessage> :
+          <>
+            <SubText title="Primeiro, filtre pelo dia do evento:" />
+            <StyledContainer>
+              {activitiesDays.map((day, index) => (
+                <StyledButton filterActivities={filterActivities} size="large" key={index} id={day.id} setSelectedDay={setSelectedDay} selectedDay={selectedDay} weekDay={day.weekDay} date={day.date} />
+              ))}
+            </StyledContainer>
+            <StyledArea>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Auditório Principal</th>
+                    <th>Auditório Lateral</th>
+                    <th>Sala de Workshop</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      {activities.map((activity) => {
+                        if (activity.location === 'Auditório Principal') {
+                          return <ActivityBox filterActivities={filterActivities} selectedActivities={selectedActivities} key={activity.id} activity={activity} />
+                        }
+                      })}
+                    </td>
+                    <td>
+                      {activities.map((activity) => {
+                        if (activity.location === 'Auditório Lateral') {
+                          return <ActivityBox filterActivities={filterActivities} selectedActivities={selectedActivities} key={activity.id} activity={activity} />
+                        }
+                      })}
+                    </td>
+                    <td>
+                      {activities.map((activity) => {
+                        if (activity.location === 'Workshop') {
+                          return <ActivityBox filterActivities={filterActivities} selectedActivities={selectedActivities} key={activity.id} activity={activity} />
+                        }
+                      })}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </StyledArea>
+          </>
+      }
     </>
   );
 }
+
+const AccessDeniedMessage = styled.h2`
+  width: 100%;
+  height: 85%;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 23px;
+  letter-spacing: 0em;
+  text-align: center;
+  color: #8E8E8E;
+  display: flex;
+  align-items:center;
+  justify-content: center;
+`
 
 const StyledContainer = styled.div`
   display: flex;
@@ -132,55 +211,5 @@ const StyledArea = styled.div`
     font-size: 17px;
     font-weight: 400;
     padding-bottom: 10px;
-  }
-`;
-
-const StyledActivity = styled.div`
-  background-color: #f1f1f1;
-  width: 265px;
-  height: 79px;
-  margin-top: 10px;
-  margin-left: 10px;
-  border-radius: 5px;
-  display: flex;
-  h1 {
-    color: #343434;
-    font-size: 12px;
-    font-weight: 700;
-  }
-  p {
-    color: #343434;
-    font-size: 12px;
-    font-weight: 400;
-  }
-`;
-
-const StyledInfo = styled.div`
-  width: 200px;
-  margin: 10px;
-`;
-
-const StyledIcon = styled.div`
-  width: 65px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-left: 1px solid #cfcfcf;
-  ion-icon {
-    width: 20px;
-    color: #078632;
-    top: 15px;
-    left: 18px;
-  }
-  ion-icon {
-    width: 20px;
-    color: #078632;
-    top: 15px;
-    left: 18px;
-  }
-  p {
-    color: #078632;
-    font-size: 9px;
   }
 `;
