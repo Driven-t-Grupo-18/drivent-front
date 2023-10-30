@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
@@ -56,14 +56,15 @@ export default function SignIn() {
     window.location.href = authURL;
   }
 
-  window.onload = async () => {
+  useEffect(() => {
+   async function getCode() {
     const url = new URL(window.location.href);
     const code = url.search.split('=')[1]
     if(code) {
       console.log("Code from Github");
 
       try {
-        const userData = await signIn({code});
+        const userData = await signIn({code : code});
         setUserData(userData);
         toast('Login realizado com sucesso!');
         navigate('/dashboard');
@@ -74,6 +75,8 @@ export default function SignIn() {
     }
   }
 
+  getCode()
+}, [])
   return (
     <AuthLayout background={eventInfo.backgroundImageUrl}>
       <Row>
