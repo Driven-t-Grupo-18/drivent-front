@@ -44,7 +44,7 @@ export default function SignIn() {
 
   function redirectToGitHub() {
 
-    const GITHUB_URL = 'https://github.com/login/oauth/authorize';
+    const GITHUB_URL = 'http://github.com/login/oauth/authorize';
     const params = {
       response_type: 'code',
       scope: 'user',
@@ -58,12 +58,12 @@ export default function SignIn() {
 
   window.onload = async () => {
     const url = new URL(window.location.href);
-    const code = url.searchParams.get("code");
+    const code = url.search.split('=')[1]
     if(code) {
       console.log("Code from Github");
 
       try {
-        const userData = await signIn({code : code});
+        const userData = await signIn({code});
         setUserData(userData);
         toast('Login realizado com sucesso!');
         navigate('/dashboard');
